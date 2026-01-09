@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block title %}Bukamalu - Share My Location{% endblock %}
+
+{% block content %}
+<div class="home-page">
+    <div class="hero">
+        <div class="icon-container">
+            <span class="main-icon">📍</span>
+        </div>
+        <h1>Bukamalu</h1>
+        <p class="subtitle">Share your location with one click</p>
+    </div>
+    
+    <div class="main-action">
+        <button id="shareBtn" class="btn-primary btn-large" onclick="startSharing()">
+            <span class="btn-icon">📍</span>
+            <span class="btn-text">SHARE MY LOCATION</span>
+        </button>
+        
+        <p class="hint">One click to create a shareable link</p>
+    </div>
+    
+    <!-- Loading state -->
+    <div id="loadingState" class="state-container hidden">
+        <div class="spinner"></div>
+        <p>Getting your location...</p>
+    </div>
+    
+    <!-- Success state with share link -->
+    <div id="successState" class="state-container hidden">
+        <div class="success-icon">✓</div>
+        <h2>Link Created!</h2>
+        
+        <div class="link-container">
+            <input type="text" id="shareLink" readonly class="share-link-input">
+            <button id="copyBtn" class="btn-secondary" onclick="copyLink()">
+                <span id="copyText">COPY</span>
+            </button>
+        </div>
+        
+        <div class="share-buttons">
+            <a id="whatsappShare" href="#" class="btn-share btn-whatsapp" target="_blank">
+                <span>📱</span> WhatsApp
+            </a>
+            <a id="smsShare" href="#" class="btn-share btn-sms">
+                <span>💬</span> SMS
+            </a>
+        </div>
+        
+        <a id="viewMapLink" href="#" class="btn-primary btn-medium">
+            <span>🗺️</span> View Map
+        </a>
+        
+        <p class="privacy-note">
+            🔒 Location shared for 2 hours only
+        </p>
+    </div>
+    
+    <!-- Error state -->
+    <div id="errorState" class="state-container hidden">
+        <div class="error-icon">!</div>
+        <h2>Cannot Get Location</h2>
+        <p id="errorMessage">Please allow location access and try again.</p>
+        <button class="btn-secondary" onclick="retrySharing()">TRY AGAIN</button>
+    </div>
+</div>
+
+<script>
+    let currentSessionCode = null;
+    
+    function startSharing() {
+        showState('loading');
+        getLocation();
+    }
+    
+    function retrySharing() {
+        showState('main');
+    }
+    
+    function showState(state) {
+        document.getElementById('shareBtn').parentElement.classList.toggle('hidden', state !== 'main');
+        document.querySelector('.hint').classList.toggle('hidden', state !== 'main');
+        document.getElementById('loadingState').classList.toggle('hidden', state !== 'loading');
+        document.getElementById('successState').classList.toggle('hidden', state !== 'success');
+        document.getElementById('errorState').classList.toggle('hidden', state !== 'error');
+    }
+    
+    function getLocation() {
+        if (!navigator.geolocation) {
+            showError('Geolocation is not supported by your browser.');
+            return;
+        }
+        
+        navigator.geolocation.getCurrentPosition(
+            onLocationSuccess,
+            onLocationError,
+            {
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 0
+            }
+        );
+    }
+    
+    function onLocationSuccess(position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        
+        // Send to server to create session
+        fetch('/api/create-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ lat, lng })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                currentSessionCode = data.session_code;
+                showShareLink(data.share_url, data.session_code);
+            } else {
+                showError(data.error || 'Could not create session');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError('Network error. Please try again.');
+        });
+    }
+    
+    function onLocationError(error) {
+        let message = 'Could not get your location.';
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                message = 'Please allow location access in your browser settings.';
+                break;
+            case error.POSITION_UNAVAILABLE:
+                message = 'Location information is unavailable.';
+                break;
+            case error.TIMEOUT:
+                message = 'Location request timed out. Please try again.';
+                break;
+        }
+        showError(message);
+    }
+    
+    function showError(message) {
+        document.getElementById('errorMessage').textContent = message;
+        showState('error');
+    }
+    
+    function showShareLink(url, sessionCode) {
+        document.getElementById('shareLink').value = url;
+        document.getElementById('viewMapLink').href = '/host/' + sessionCode;
+        
+        // WhatsApp share link
+        const whatsappText = encodeURIComponent('I\'m sharing my location with you! Click here to see where I am: ' + url);
+        document.getElementById('whatsappShare').href = 'https://wa.me/?text=' + whatsappText;
+        
+        // SMS share link
+        const smsText = encodeURIComponent('My location: ' + url);
+        document.getElementById('smsShare').href = 'sms:?body=' + smsText;
+        
+        showState('success');
+    }
+    
+    function copyLink() {
+        const linkInput = document.getElementById('shareLink');
+        linkInput.select();
+        linkInput.setSelectionRange(0, 99999);
+        
+        navigator.clipboard.writeText(linkInput.value).then(() => {
+            const copyText = document.getElementById('copyText');
+            copyText.textContent = 'COPIED!';
+            setTimeout(() => {
+                copyText.textContent = 'COPY';
+            }, 2000);
+        }).catch(() => {
+            // Fallback for older browsers
+            document.execCommand('copy');
+        });
+    }
+    
+    // Initial state
+    showState('main');
+</script>
+{% endblock %}

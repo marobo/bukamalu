@@ -1,0 +1,313 @@
+{% extends 'base.html' %}
+
+{% block title %}Bukamalu - My Shared Location{% endblock %}
+
+{% block content %}
+{% if not is_valid %}
+<div class="expired-page">
+    <div class="expired-icon">⏰</div>
+    <h1>Session Expired</h1>
+    <p>This location sharing session has expired or been stopped.</p>
+    <a href="/" class="btn-primary">Create New Share Link</a>
+</div>
+{% else %}
+<div class="map-page">
+    <!-- Map container -->
+    <div id="map"></div>
+    
+    <!-- Info bar -->
+    <div class="info-bar">
+        <div class="legend">
+            <span class="legend-item">
+                <span class="marker-icon host-marker">📍</span> You
+            </span>
+            <span class="legend-item">
+                <span class="marker-icon visitor-marker">🚶</span> Visitor
+            </span>
+        </div>
+        <div id="distance" class="distance-info"></div>
+    </div>
+    
+    <!-- Waiting for visitor message -->
+    <div id="waitingMessage" class="waiting-banner">
+        <div class="spinner-small"></div>
+        <span>Waiting for visitor to open the link...</span>
+    </div>
+    
+    <!-- Bottom actions -->
+    <div class="bottom-bar">
+        <button class="btn-secondary" onclick="shareAgain()">
+            📤 SHARE LINK AGAIN
+        </button>
+        <button id="stopBtn" class="btn-danger" onclick="stopSharing()">
+            STOP
+        </button>
+    </div>
+    
+    <!-- Status messages -->
+    <div id="statusMessage" class="status-message hidden"></div>
+</div>
+
+<script>
+    const SESSION_CODE = '{{ session_code }}';
+    const HOST_LAT = {{ host_lat|default:"null" }};
+    const HOST_LNG = {{ host_lng|default:"null" }};
+    const ROLE = 'host';
+    const SHARE_URL = window.location.origin + '/share/' + SESSION_CODE;
+    
+    let map = null;
+    let hostMarker = null;
+    let visitorMarker = null;
+    let connectingLine = null;
+    let watchId = null;
+    let updateInterval = null;
+    
+    // Custom icons
+    const hostIcon = L.divIcon({
+        className: 'custom-marker host-marker-icon',
+        html: '<div class="marker-pin host">📍</div>',
+        iconSize: [40, 40],
+        iconAnchor: [20, 40]
+    });
+    
+    const visitorIcon = L.divIcon({
+        className: 'custom-marker visitor-marker-icon',
+        html: '<div class="marker-pin visitor">🚶</div>',
+        iconSize: [40, 40],
+        iconAnchor: [20, 40]
+    });
+    
+    function initMap() {
+        // Initialize map centered on host location
+        map = L.map('map').setView([HOST_LAT, HOST_LNG], 15);
+        
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+        
+        // Add host marker
+        hostMarker = L.marker([HOST_LAT, HOST_LNG], { icon: hostIcon })
+            .addTo(map)
+            .bindPopup('<strong>📍 Your Location</strong>');
+        
+        // Start watching host position for updates
+        startWatchingHostPosition();
+        
+        // Start fetching visitor location updates
+        startLocationUpdates();
+    }
+    
+    function startWatchingHostPosition() {
+        if (!navigator.geolocation) return;
+        
+        watchId = navigator.geolocation.watchPosition(
+            (position) => {
+                updateHostMarker(position.coords.latitude, position.coords.longitude);
+                sendLocationToServer(position.coords.latitude, position.coords.longitude);
+            },
+            (error) => {
+                console.error('Watch position error:', error);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 5000
+            }
+        );
+    }
+    
+    function updateHostMarker(lat, lng) {
+        if (hostMarker) {
+            hostMarker.setLatLng([lat, lng]);
+            updateConnectingLine();
+            updateDistance();
+        }
+    }
+    
+    function updateVisitorMarker(lat, lng) {
+        // Hide waiting message when visitor appears
+        document.getElementById('waitingMessage').classList.add('hidden');
+        
+        if (!visitorMarker) {
+            visitorMarker = L.marker([lat, lng], { icon: visitorIcon })
+                .addTo(map)
+                .bindPopup('<strong>🚶 Visitor Location</strong>');
+            
+            // Show notification
+            showStatus('Visitor is now sharing their location!', 'success');
+        } else {
+            visitorMarker.setLatLng([lat, lng]);
+        }
+        
+        updateConnectingLine();
+        updateDistance();
+        fitMapToBounds();
+    }
+    
+    function updateConnectingLine() {
+        if (!hostMarker || !visitorMarker) return;
+        
+        const hostLatLng = hostMarker.getLatLng();
+        const visitorLatLng = visitorMarker.getLatLng();
+        
+        if (connectingLine) {
+            connectingLine.setLatLngs([hostLatLng, visitorLatLng]);
+        } else {
+            connectingLine = L.polyline([hostLatLng, visitorLatLng], {
+                color: '#e74c3c',
+                weight: 3,
+                opacity: 0.7,
+                dashArray: '10, 10'
+            }).addTo(map);
+        }
+    }
+    
+    function updateDistance() {
+        if (!hostMarker || !visitorMarker) {
+            document.getElementById('distance').textContent = '';
+            return;
+        }
+        
+        const hostLatLng = hostMarker.getLatLng();
+        const visitorLatLng = visitorMarker.getLatLng();
+        const distance = hostLatLng.distanceTo(visitorLatLng);
+        
+        let distanceText;
+        if (distance < 1000) {
+            distanceText = Math.round(distance) + ' m away';
+        } else {
+            distanceText = (distance / 1000).toFixed(1) + ' km away';
+        }
+        
+        document.getElementById('distance').textContent = distanceText;
+    }
+    
+    function fitMapToBounds() {
+        if (!hostMarker || !visitorMarker) return;
+        
+        const bounds = L.latLngBounds([
+            hostMarker.getLatLng(),
+            visitorMarker.getLatLng()
+        ]);
+        
+        map.fitBounds(bounds, { padding: [50, 50] });
+    }
+    
+    function sendLocationToServer(lat, lng) {
+        fetch('/api/update/' + SESSION_CODE, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ lat, lng, role: ROLE })
+        }).catch(error => {
+            console.error('Error sending location:', error);
+        });
+    }
+    
+    function startLocationUpdates() {
+        // Fetch updates every 5 seconds
+        updateInterval = setInterval(fetchLocations, 5000);
+        fetchLocations(); // Initial fetch
+    }
+    
+    function fetchLocations() {
+        fetch('/api/locations/' + SESSION_CODE)
+            .then(response => {
+                if (response.status === 410) {
+                    handleSessionExpired();
+                    return null;
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (!data) return;
+                
+                if (!data.is_active) {
+                    handleSessionExpired();
+                    return;
+                }
+                
+                // Update visitor marker if visitor has shared location
+                if (data.visitor.lat && data.visitor.lng) {
+                    updateVisitorMarker(data.visitor.lat, data.visitor.lng);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching locations:', error);
+            });
+    }
+    
+    function handleSessionExpired() {
+        clearInterval(updateInterval);
+        if (watchId) {
+            navigator.geolocation.clearWatch(watchId);
+        }
+        showStatus('Session has ended', 'warning');
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 3000);
+    }
+    
+    function shareAgain() {
+        // Try to use native share if available
+        if (navigator.share) {
+            navigator.share({
+                title: 'My Location',
+                text: 'I\'m sharing my location with you! Click to see where I am:',
+                url: SHARE_URL
+            }).catch(() => {
+                // Fallback to copy
+                copyShareLink();
+            });
+        } else {
+            copyShareLink();
+        }
+    }
+    
+    function copyShareLink() {
+        navigator.clipboard.writeText(SHARE_URL).then(() => {
+            showStatus('Link copied to clipboard!', 'success');
+        }).catch(() => {
+            showStatus('Share URL: ' + SHARE_URL, 'info');
+        });
+    }
+    
+    function stopSharing() {
+        if (confirm('Stop sharing your location? The visitor will no longer see your location.')) {
+            if (watchId) {
+                navigator.geolocation.clearWatch(watchId);
+            }
+            clearInterval(updateInterval);
+            
+            fetch('/api/stop/' + SESSION_CODE, {
+                method: 'POST'
+            }).then(() => {
+                showStatus('Sharing stopped', 'success');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+            });
+        }
+    }
+    
+    function showStatus(message, type) {
+        const statusEl = document.getElementById('statusMessage');
+        statusEl.textContent = message;
+        statusEl.className = 'status-message ' + type;
+        statusEl.classList.remove('hidden');
+        
+        setTimeout(() => {
+            statusEl.classList.add('hidden');
+        }, 4000);
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        initMap();
+    });
+</script>
+{% endif %}
+{% endblock %}
