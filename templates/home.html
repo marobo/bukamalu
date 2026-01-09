@@ -4,27 +4,70 @@
 
 {% block content %}
 <div class="home-page">
-    <div class="hero">
-        <div class="icon-container">
-            <span class="main-icon">📍</span>
+    <!-- Initial State: Hero & Options -->
+    <div id="initialState">
+        <div class="hero">
+            <div class="icon-container">
+                <span class="main-icon">📍</span>
+            </div>
+            <h1>Bukamalu</h1>
+            <p class="subtitle">Share your location with one click</p>
         </div>
-        <h1>Bukamalu</h1>
-        <p class="subtitle">Share your location with one click</p>
-    </div>
-    
-    <div class="main-action">
-        <button id="shareBtn" class="btn-primary btn-large" onclick="startSharing()">
-            <span class="btn-icon">📍</span>
-            <span class="btn-text">SHARE MY LOCATION</span>
-        </button>
         
-        <p class="hint">One click to create a shareable link</p>
+        <div class="action-options">
+            <button id="gpsBtn" class="btn-primary btn-large" onclick="useMyLocation()">
+                <span class="btn-icon">🎯</span>
+                <span class="btn-text">USE MY LOCATION</span>
+            </button>
+            
+            <div class="divider">
+                <span>or</span>
+            </div>
+            
+            <button id="pickBtn" class="btn-secondary btn-large-outline" onclick="pickOnMap()">
+                <span class="btn-icon">🗺️</span>
+                <span class="btn-text">PICK ON MAP</span>
+            </button>
+            
+            <p class="hint">Use GPS or tap on the map to select location</p>
+        </div>
     </div>
     
     <!-- Loading state -->
     <div id="loadingState" class="state-container hidden">
         <div class="spinner"></div>
         <p>Getting your location...</p>
+    </div>
+    
+    <!-- Map Selection State -->
+    <div id="mapState" class="map-selection-page hidden">
+        <div id="selectionMap" class="selection-map"></div>
+        
+        <!-- Location info overlay -->
+        <div class="location-info-bar">
+            <div class="location-text">
+                <span class="location-icon">📍</span>
+                <span id="locationCoords">Drag marker or tap to adjust</span>
+            </div>
+            <button id="recenterBtn" class="btn-icon-only" onclick="recenterToMyLocation()" title="Use my location">
+                🎯
+            </button>
+        </div>
+        
+        <!-- Search/Address hint -->
+        <div class="map-hint">
+            <span>💡</span> Tap anywhere on the map to move the pin
+        </div>
+        
+        <!-- Bottom action bar -->
+        <div class="map-action-bar">
+            <button class="btn-text-back" onclick="goBack()">
+                ← Back
+            </button>
+            <button id="confirmBtn" class="btn-primary btn-confirm" onclick="confirmLocation()">
+                <span>✓</span> SHARE THIS LOCATION
+            </button>
+        </div>
     </div>
     
     <!-- Success state with share link -->
@@ -55,6 +98,10 @@
         <p class="privacy-note">
             🔒 Location shared for 2 hours only
         </p>
+        
+        <button class="btn-text" onclick="startOver()">
+            Share a different location
+        </button>
     </div>
     
     <!-- Error state -->
@@ -62,39 +109,73 @@
         <div class="error-icon">!</div>
         <h2>Cannot Get Location</h2>
         <p id="errorMessage">Please allow location access and try again.</p>
-        <button class="btn-secondary" onclick="retrySharing()">TRY AGAIN</button>
+        <button class="btn-secondary" onclick="retryWithMap()">PICK ON MAP INSTEAD</button>
+        <button class="btn-text" onclick="startOver()">Try Again</button>
     </div>
 </div>
 
 <script>
     let currentSessionCode = null;
+    let selectionMap = null;
+    let selectionMarker = null;
+    let selectedLat = null;
+    let selectedLng = null;
     
-    function startSharing() {
-        showState('loading');
-        getLocation();
-    }
+    // Default center (will be overwritten by GPS or user selection)
+    const DEFAULT_CENTER = [-6.2088, 106.8456]; // Jakarta as fallback
     
-    function retrySharing() {
-        showState('main');
-    }
+    // Custom marker icon for selection
+    const selectionIcon = L.divIcon({
+        className: 'custom-marker selection-marker-icon',
+        html: '<div class="marker-pin selection">📍</div><div class="marker-pulse"></div>',
+        iconSize: [50, 50],
+        iconAnchor: [25, 50]
+    });
     
     function showState(state) {
-        document.getElementById('shareBtn').parentElement.classList.toggle('hidden', state !== 'main');
-        document.querySelector('.hint').classList.toggle('hidden', state !== 'main');
+        document.getElementById('initialState').classList.toggle('hidden', state !== 'initial');
         document.getElementById('loadingState').classList.toggle('hidden', state !== 'loading');
+        document.getElementById('mapState').classList.toggle('hidden', state !== 'map');
         document.getElementById('successState').classList.toggle('hidden', state !== 'success');
         document.getElementById('errorState').classList.toggle('hidden', state !== 'error');
+        
+        // Resize map if showing map state
+        if (state === 'map' && selectionMap) {
+            setTimeout(() => {
+                selectionMap.invalidateSize();
+            }, 100);
+        }
     }
     
-    function getLocation() {
+    function useMyLocation() {
+        showState('loading');
+        
         if (!navigator.geolocation) {
             showError('Geolocation is not supported by your browser.');
             return;
         }
         
         navigator.geolocation.getCurrentPosition(
-            onLocationSuccess,
-            onLocationError,
+            (position) => {
+                selectedLat = position.coords.latitude;
+                selectedLng = position.coords.longitude;
+                showMapWithLocation(selectedLat, selectedLng);
+            },
+            (error) => {
+                let message = 'Could not get your location.';
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        message = 'Please allow location access or pick location manually.';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        message = 'Location information is unavailable.';
+                        break;
+                    case error.TIMEOUT:
+                        message = 'Location request timed out.';
+                        break;
+                }
+                showError(message);
+            },
             {
                 enableHighAccuracy: true,
                 timeout: 15000,
@@ -103,9 +184,133 @@
         );
     }
     
-    function onLocationSuccess(position) {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
+    function pickOnMap() {
+        // Try to get rough location first, fall back to default
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    showMapWithLocation(position.coords.latitude, position.coords.longitude);
+                },
+                () => {
+                    // Failed to get location, use default
+                    showMapWithLocation(DEFAULT_CENTER[0], DEFAULT_CENTER[1]);
+                },
+                {
+                    enableHighAccuracy: false,
+                    timeout: 5000,
+                    maximumAge: 300000 // Accept cached location up to 5 min old
+                }
+            );
+        } else {
+            showMapWithLocation(DEFAULT_CENTER[0], DEFAULT_CENTER[1]);
+        }
+    }
+    
+    function showMapWithLocation(lat, lng) {
+        selectedLat = lat;
+        selectedLng = lng;
+        showState('map');
+        
+        if (!selectionMap) {
+            initSelectionMap(lat, lng);
+        } else {
+            selectionMap.setView([lat, lng], 16);
+            selectionMarker.setLatLng([lat, lng]);
+        }
+        
+        updateLocationDisplay();
+    }
+    
+    function initSelectionMap(lat, lng) {
+        selectionMap = L.map('selectionMap', {
+            zoomControl: true,
+            attributionControl: true
+        }).setView([lat, lng], 16);
+        
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap',
+            maxZoom: 19
+        }).addTo(selectionMap);
+        
+        // Add draggable marker
+        selectionMarker = L.marker([lat, lng], {
+            icon: selectionIcon,
+            draggable: true
+        }).addTo(selectionMap);
+        
+        // Handle marker drag
+        selectionMarker.on('dragend', function(e) {
+            const pos = e.target.getLatLng();
+            selectedLat = pos.lat;
+            selectedLng = pos.lng;
+            updateLocationDisplay();
+        });
+        
+        // Handle map click to move marker
+        selectionMap.on('click', function(e) {
+            selectedLat = e.latlng.lat;
+            selectedLng = e.latlng.lng;
+            selectionMarker.setLatLng(e.latlng);
+            updateLocationDisplay();
+            
+            // Add a little bounce animation feedback
+            const markerEl = selectionMarker.getElement();
+            if (markerEl) {
+                markerEl.classList.add('marker-bounce');
+                setTimeout(() => markerEl.classList.remove('marker-bounce'), 300);
+            }
+        });
+    }
+    
+    function updateLocationDisplay() {
+        const coordsEl = document.getElementById('locationCoords');
+        if (selectedLat && selectedLng) {
+            const latStr = selectedLat.toFixed(6);
+            const lngStr = selectedLng.toFixed(6);
+            coordsEl.textContent = `${latStr}, ${lngStr}`;
+        }
+    }
+    
+    function recenterToMyLocation() {
+        if (!navigator.geolocation) {
+            alert('Geolocation not supported');
+            return;
+        }
+        
+        const btn = document.getElementById('recenterBtn');
+        btn.classList.add('spinning');
+        
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                selectedLat = position.coords.latitude;
+                selectedLng = position.coords.longitude;
+                selectionMap.setView([selectedLat, selectedLng], 16);
+                selectionMarker.setLatLng([selectedLat, selectedLng]);
+                updateLocationDisplay();
+                btn.classList.remove('spinning');
+            },
+            (error) => {
+                btn.classList.remove('spinning');
+                alert('Could not get your current location');
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
+    }
+    
+    function confirmLocation() {
+        if (!selectedLat || !selectedLng) {
+            alert('Please select a location first');
+            return;
+        }
+        
+        const btn = document.getElementById('confirmBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-small"></span> Creating...';
         
         // Send to server to create session
         fetch('/api/create-session', {
@@ -113,7 +318,7 @@
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ lat, lng })
+            body: JSON.stringify({ lat: selectedLat, lng: selectedLng })
         })
         .then(response => response.json())
         .then(data => {
@@ -121,34 +326,17 @@
                 currentSessionCode = data.session_code;
                 showShareLink(data.share_url, data.session_code);
             } else {
-                showError(data.error || 'Could not create session');
+                alert(data.error || 'Could not create session');
+                btn.disabled = false;
+                btn.innerHTML = '<span>✓</span> SHARE THIS LOCATION';
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            showError('Network error. Please try again.');
+            alert('Network error. Please try again.');
+            btn.disabled = false;
+            btn.innerHTML = '<span>✓</span> SHARE THIS LOCATION';
         });
-    }
-    
-    function onLocationError(error) {
-        let message = 'Could not get your location.';
-        switch(error.code) {
-            case error.PERMISSION_DENIED:
-                message = 'Please allow location access in your browser settings.';
-                break;
-            case error.POSITION_UNAVAILABLE:
-                message = 'Location information is unavailable.';
-                break;
-            case error.TIMEOUT:
-                message = 'Location request timed out. Please try again.';
-                break;
-        }
-        showError(message);
-    }
-    
-    function showError(message) {
-        document.getElementById('errorMessage').textContent = message;
-        showState('error');
     }
     
     function showShareLink(url, sessionCode) {
@@ -166,6 +354,34 @@
         showState('success');
     }
     
+    function showError(message) {
+        document.getElementById('errorMessage').textContent = message;
+        showState('error');
+    }
+    
+    function retryWithMap() {
+        pickOnMap();
+    }
+    
+    function goBack() {
+        showState('initial');
+    }
+    
+    function startOver() {
+        selectedLat = null;
+        selectedLng = null;
+        currentSessionCode = null;
+        
+        // Reset confirm button
+        const btn = document.getElementById('confirmBtn');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<span>✓</span> SHARE THIS LOCATION';
+        }
+        
+        showState('initial');
+    }
+    
     function copyLink() {
         const linkInput = document.getElementById('shareLink');
         linkInput.select();
@@ -178,12 +394,11 @@
                 copyText.textContent = 'COPY';
             }, 2000);
         }).catch(() => {
-            // Fallback for older browsers
             document.execCommand('copy');
         });
     }
     
     // Initial state
-    showState('main');
+    showState('initial');
 </script>
 {% endblock %}
