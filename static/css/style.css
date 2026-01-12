@@ -254,10 +254,6 @@ body {
     padding: 12px;
 }
 
-.btn-text:hover {
-    color: var(--gray-700);
-}
-
 .btn-icon {
     font-size: 1.2em;
 }
