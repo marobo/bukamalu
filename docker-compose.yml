@@ -1,0 +1,23 @@
+services:
+  web:
+    build: .
+    container_name: bukamalu_web
+    # Remove ports - Traefik handles routing
+    volumes:
+      - .:/app
+      - ./staticfiles:/app/staticfiles
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.bukamalu.rule=Host(`bukamalu.onorio.dev`)"
+      - "traefik.http.routers.bukamalu.entrypoints=websecure"
+      - "traefik.http.routers.bukamalu.tls.certresolver=letsencrypt"
+      - "traefik.http.services.bukamalu.loadbalancer.server.port=8000"
+
+networks:
+  proxy:
+    external: true
