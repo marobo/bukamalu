@@ -223,7 +223,6 @@ body {
 .btn-large-outline:hover,
 .btn-large-outline:active {
     border-color: var(--primary);
-    color: var(--primary);
 }
 
 .btn-danger {
@@ -252,6 +251,10 @@ body {
     font-size: 15px;
     cursor: pointer;
     padding: 12px;
+}
+
+.btn-text:hover {
+    color: var(--gray-400);
 }
 
 .btn-icon {
