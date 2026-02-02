@@ -67,6 +67,8 @@
     let watchId = null;
     let updateInterval = null;
     let visitorLocationShared = false;
+    let routeCache = null;
+    let routeRequestPending = false;
     
     // Custom icons
     const hostIcon = L.divIcon({
@@ -184,16 +186,83 @@
         const hostLatLng = hostMarker.getLatLng();
         const visitorLatLng = visitorMarker.getLatLng();
         
+        // Fetch road route from OSRM (visitor → host direction)
+        fetchRoute(visitorLatLng, hostLatLng);
+    }
+    
+    function fetchRoute(from, to) {
+        if (routeRequestPending) return;
+        
+        // Check if positions changed significantly (more than 50m)
+        if (routeCache) {
+            const fromDist = from.distanceTo(routeCache.from);
+            const toDist = to.distanceTo(routeCache.to);
+            if (fromDist < 50 && toDist < 50) return;
+        }
+        
+        routeRequestPending = true;
+        
+        // OSRM API (free, uses OpenStreetMap data)
+        const url = `https://router.project-osrm.org/route/v1/foot/${from.lng},${from.lat};${to.lng},${to.lat}?overview=full&geometries=geojson`;
+        
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                routeRequestPending = false;
+                
+                if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+                    const route = data.routes[0];
+                    const coordinates = route.geometry.coordinates.map(coord => [coord[1], coord[0]]);
+                    
+                    // Cache the route
+                    routeCache = { from: L.latLng(from.lat, from.lng), to: L.latLng(to.lat, to.lng) };
+                    
+                    // Update or create the route line
+                    if (connectingLine) {
+                        connectingLine.setLatLngs(coordinates);
+                    } else {
+                        connectingLine = L.polyline(coordinates, {
+                            color: '#2563eb',
+                            weight: 4,
+                            opacity: 0.8
+                        }).addTo(map);
+                    }
+                    
+                    // Update distance with road distance
+                    updateRoadDistance(route.distance);
+                } else {
+                    // Fallback to straight line
+                    drawStraightLine(from, to);
+                }
+            })
+            .catch(error => {
+                routeRequestPending = false;
+                console.error('Route fetch error:', error);
+                drawStraightLine(from, to);
+            });
+    }
+    
+    function drawStraightLine(from, to) {
         if (connectingLine) {
-            connectingLine.setLatLngs([hostLatLng, visitorLatLng]);
+            connectingLine.setLatLngs([from, to]);
         } else {
-            connectingLine = L.polyline([hostLatLng, visitorLatLng], {
-                color: '#e74c3c',
-                weight: 3,
-                opacity: 0.7,
-                dashArray: '10, 10'
+            connectingLine = L.polyline([from, to], {
+                color: '#2563eb',
+                weight: 4,
+                opacity: 0.8,
+                dashArray: '8, 8'
             }).addTo(map);
         }
+    }
+    
+    function updateRoadDistance(meters) {
+        let distanceText;
+        if (meters < 1000) {
+            distanceText = Math.round(meters) + ' m away';
+        } else {
+            distanceText = (meters / 1000).toFixed(1) + ' km away';
+        }
+        document.getElementById('distance').textContent = distanceText;
     }
     
     function updateDistance() {
