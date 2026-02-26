@@ -13,7 +13,13 @@
 {% else %}
 <div class="map-page">
     <!-- Map container -->
-    <div id="map"></div>
+    <div class="map-wrapper">
+        <div id="map"></div>
+        <div class="map-style-toggle" role="group" aria-label="Map style">
+            <button type="button" class="map-style-btn active" data-style="default" onclick="switchMapStyle('default')">Map</button>
+            <button type="button" class="map-style-btn" data-style="satellite" onclick="switchMapStyle('satellite')">Satellite</button>
+        </div>
+    </div>
     
     <!-- Info bar -->
     <div class="info-bar">
@@ -63,6 +69,8 @@
     let updateInterval = null;
     let routeCache = null;
     let routeRequestPending = false;
+    let defaultLayer = null;
+    let satelliteLayer = null;
     
     // Custom icons
     const hostIcon = L.divIcon({
@@ -83,11 +91,16 @@
         // Initialize map centered on host location
         map = L.map('map').setView([HOST_LAT, HOST_LNG], 15);
         
-        // Add OpenStreetMap tiles
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        // Base layers: default (OSM) and satellite
+        defaultLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
             maxZoom: 19
-        }).addTo(map);
+        });
+        satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '© Esri',
+            maxZoom: 19
+        });
+        defaultLayer.addTo(map);
         
         // Add host marker
         hostMarker = L.marker([HOST_LAT, HOST_LNG], { icon: hostIcon })
@@ -99,6 +112,20 @@
         
         // Start fetching visitor location updates
         startLocationUpdates();
+    }
+    
+    function switchMapStyle(style) {
+        if (!map || !defaultLayer || !satelliteLayer) return;
+        if (style === 'satellite') {
+            map.removeLayer(defaultLayer);
+            map.addLayer(satelliteLayer);
+        } else {
+            map.removeLayer(satelliteLayer);
+            map.addLayer(defaultLayer);
+        }
+        document.querySelectorAll('.map-style-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.style === style);
+        });
     }
     
     function startWatchingHostPosition() {

@@ -41,13 +41,19 @@
     
     <!-- Map Selection State -->
     <div id="mapState" class="map-selection-page hidden">
-        <div id="selectionMap" class="selection-map"></div>
+        <div class="selection-map-wrapper">
+            <div id="selectionMap" class="selection-map"></div>
+        </div>
         
         <!-- Location info overlay -->
         <div class="location-info-bar">
             <div class="location-text">
                 <span class="location-icon">📍</span>
                 <span id="locationCoords">Drag marker or tap to adjust</span>
+            </div>
+            <div class="map-style-toggle" role="group" aria-label="Map style">
+                <button type="button" class="map-style-btn active" data-style="default" onclick="switchSelectionMapStyle('default')">Map</button>
+                <button type="button" class="map-style-btn" data-style="satellite" onclick="switchSelectionMapStyle('satellite')">Satellite</button>
             </div>
             <button id="recenterBtn" class="btn-icon-only" onclick="recenterToMyLocation()" title="Use my location">
                 🎯
@@ -117,6 +123,8 @@
 <script>
     let currentSessionCode = null;
     let selectionMap = null;
+    let selectionDefaultLayer = null;
+    let selectionSatelliteLayer = null;
     let selectionMarker = null;
     let selectedLat = null;
     let selectedLng = null;
@@ -227,11 +235,16 @@
             attributionControl: true
         }).setView([lat, lng], 16);
         
-        // Add OpenStreetMap tiles
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        // Base layers: default (OSM) and satellite
+        selectionDefaultLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap',
             maxZoom: 19
-        }).addTo(selectionMap);
+        });
+        selectionSatelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '© Esri',
+            maxZoom: 19
+        });
+        selectionDefaultLayer.addTo(selectionMap);
         
         // Add draggable marker
         selectionMarker = L.marker([lat, lng], {
@@ -260,6 +273,20 @@
                 markerEl.classList.add('marker-bounce');
                 setTimeout(() => markerEl.classList.remove('marker-bounce'), 300);
             }
+        });
+    }
+    
+    function switchSelectionMapStyle(style) {
+        if (!selectionMap || !selectionDefaultLayer || !selectionSatelliteLayer) return;
+        if (style === 'satellite') {
+            selectionMap.removeLayer(selectionDefaultLayer);
+            selectionMap.addLayer(selectionSatelliteLayer);
+        } else {
+            selectionMap.removeLayer(selectionSatelliteLayer);
+            selectionMap.addLayer(selectionDefaultLayer);
+        }
+        document.querySelectorAll('#mapState .map-style-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.style === style);
         });
     }
     
