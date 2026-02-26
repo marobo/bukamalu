@@ -14,9 +14,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = [
-    host.strip() for host in config("ALLOWED_HOSTS", "").split(",") if host.strip()
-]
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=lambda v: [s.strip() for s in v.split(',')])
 
 # Application definition
 INSTALLED_APPS = [
@@ -75,3 +73,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Session expiry time in hours
 LOCATION_SESSION_EXPIRY_HOURS = 2
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass
