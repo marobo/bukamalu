@@ -47,13 +47,9 @@
         
         <!-- Location info overlay -->
         <div class="location-info-bar">
-            <div class="location-text">
-                <span class="location-icon">📍</span>
-                <span id="locationCoords">Drag marker or tap to adjust</span>
-            </div>
             <div class="map-style-toggle" role="group" aria-label="Map style">
-                <button type="button" class="map-style-btn active" data-style="default" onclick="switchSelectionMapStyle('default')">Map</button>
-                <button type="button" class="map-style-btn" data-style="satellite" onclick="switchSelectionMapStyle('satellite')">Satellite</button>
+                <button type="button" class="map-style-btn active" data-style="default" onclick="switchSelectionMapStyle('default')">Default</button>
+                <button type="button" class="map-style-btn" data-style="satellite" onclick="switchSelectionMapStyle('satellite')">Satelite</button>
             </div>
             <button id="recenterBtn" class="btn-icon-only" onclick="recenterToMyLocation()" title="Use my location">
                 🎯
@@ -67,11 +63,11 @@
         
         <!-- Bottom action bar -->
         <div class="map-action-bar">
-            <button class="btn-text-back" onclick="goBack()">
-                ← Back
-            </button>
             <button id="confirmBtn" class="btn-primary btn-confirm" onclick="confirmLocation()">
                 <span>✓</span> SHARE THIS LOCATION
+            </button>
+            <button class="btn-text-back" onclick="goBack()">
+                Cancel
             </button>
         </div>
     </div>
