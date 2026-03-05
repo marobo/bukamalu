@@ -28,7 +28,13 @@
     </div>
     
     <!-- Map container -->
-    <div id="map"></div>
+    <div class="map-wrapper">
+        <div id="map"></div>
+        <div class="map-style-toggle" role="group" aria-label="Map style">
+            <button type="button" class="map-style-btn active" data-style="default" onclick="switchMapStyle('default')">Map</button>
+            <button type="button" class="map-style-btn" data-style="satellite" onclick="switchMapStyle('satellite')">Satellite</button>
+        </div>
+    </div>
     
     <!-- Info bar -->
     <div class="info-bar">
@@ -59,6 +65,7 @@
     const HOST_LAT = {{ host_lat|default:"null" }};
     const HOST_LNG = {{ host_lng|default:"null" }};
     const ROLE = 'visitor';
+    const MAPBOX_TOKEN = '{{ mapbox_token|escapejs }}';
     
     let map = null;
     let hostMarker = null;
@@ -69,6 +76,8 @@
     let visitorLocationShared = false;
     let routeCache = null;
     let routeRequestPending = false;
+    let defaultLayer = null;
+    let satelliteLayer = null;
     
     // Custom icons
     const hostIcon = L.divIcon({
@@ -89,11 +98,10 @@
         // Initialize map centered on host location
         map = L.map('map').setView([HOST_LAT, HOST_LNG], 15);
         
-        // Add OpenStreetMap tiles
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors',
-            maxZoom: 19
-        }).addTo(map);
+        var layers = BukamaluMap.createTileLayers(MAPBOX_TOKEN);
+        defaultLayer = layers.defaultLayer;
+        satelliteLayer = layers.satelliteLayer;
+        defaultLayer.addTo(map);
         
         // Add host marker
         hostMarker = L.marker([HOST_LAT, HOST_LNG], { icon: hostIcon })
@@ -102,6 +110,11 @@
         
         // Start fetching location updates
         startLocationUpdates();
+    }
+    
+    function switchMapStyle(style) {
+        BukamaluMap.switchStyle(map, defaultLayer, satelliteLayer, style);
+        BukamaluMap.updateStyleButtons(style, '.map-style-btn');
     }
     
     function requestLocation() {
