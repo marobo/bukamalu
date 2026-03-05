@@ -60,6 +60,7 @@
     const HOST_LNG = {{ host_lng|default:"null" }};
     const ROLE = 'host';
     const SHARE_URL = window.location.origin + '/share/' + SESSION_CODE;
+    const MAPBOX_TOKEN = '{{ mapbox_token|escapejs }}';
     
     let map = null;
     let hostMarker = null;
@@ -91,15 +92,9 @@
         // Initialize map centered on host location
         map = L.map('map').setView([HOST_LAT, HOST_LNG], 15);
         
-        // Base layers: default (OSM) and satellite
-        defaultLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors',
-            maxZoom: 19
-        });
-        satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: '© Esri',
-            maxZoom: 19
-        });
+        var layers = BukamaluMap.createTileLayers(MAPBOX_TOKEN);
+        defaultLayer = layers.defaultLayer;
+        satelliteLayer = layers.satelliteLayer;
         defaultLayer.addTo(map);
         
         // Add host marker
@@ -115,17 +110,8 @@
     }
     
     function switchMapStyle(style) {
-        if (!map || !defaultLayer || !satelliteLayer) return;
-        if (style === 'satellite') {
-            map.removeLayer(defaultLayer);
-            map.addLayer(satelliteLayer);
-        } else {
-            map.removeLayer(satelliteLayer);
-            map.addLayer(defaultLayer);
-        }
-        document.querySelectorAll('.map-style-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.style === style);
-        });
+        BukamaluMap.switchStyle(map, defaultLayer, satelliteLayer, style);
+        BukamaluMap.updateStyleButtons(style, '.map-style-btn');
     }
     
     function startWatchingHostPosition() {

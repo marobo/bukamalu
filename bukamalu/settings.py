@@ -42,6 +42,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'bukamalu.context_processors.mapbox_token',
             ],
         },
     },
@@ -73,6 +74,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Session expiry time in hours
 LOCATION_SESSION_EXPIRY_HOURS = 2
+
+# Mapbox: set MAPBOX_ACCESS_TOKEN in .env to use Mapbox tiles (otherwise OSM/Esri)
+MAPBOX_ACCESS_TOKEN = config('MAPBOX_ACCESS_TOKEN', default='')
 
 try:
     from .local_settings import *

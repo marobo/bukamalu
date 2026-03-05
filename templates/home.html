@@ -124,9 +124,10 @@
     let selectionMarker = null;
     let selectedLat = null;
     let selectedLng = null;
+    const MAPBOX_TOKEN = '{{ mapbox_token|escapejs }}';
     
-    // Default center (will be overwritten by GPS or user selection)
-    const DEFAULT_CENTER = [-6.2088, 106.8456]; // Jakarta as fallback
+    // Default center when GPS unavailable or denied
+    const DEFAULT_CENTER = [-8.5585, 125.5785]; // Dili, Timor-Leste
     
     // Custom marker icon for selection
     const selectionIcon = L.divIcon({
@@ -231,15 +232,9 @@
             attributionControl: true
         }).setView([lat, lng], 16);
         
-        // Base layers: default (OSM) and satellite
-        selectionDefaultLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap',
-            maxZoom: 19
-        });
-        selectionSatelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: '© Esri',
-            maxZoom: 19
-        });
+        var layers = BukamaluMap.createTileLayers(MAPBOX_TOKEN);
+        selectionDefaultLayer = layers.defaultLayer;
+        selectionSatelliteLayer = layers.satelliteLayer;
         selectionDefaultLayer.addTo(selectionMap);
         
         // Add draggable marker
@@ -273,17 +268,8 @@
     }
     
     function switchSelectionMapStyle(style) {
-        if (!selectionMap || !selectionDefaultLayer || !selectionSatelliteLayer) return;
-        if (style === 'satellite') {
-            selectionMap.removeLayer(selectionDefaultLayer);
-            selectionMap.addLayer(selectionSatelliteLayer);
-        } else {
-            selectionMap.removeLayer(selectionSatelliteLayer);
-            selectionMap.addLayer(selectionDefaultLayer);
-        }
-        document.querySelectorAll('#mapState .map-style-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.style === style);
-        });
+        BukamaluMap.switchStyle(selectionMap, selectionDefaultLayer, selectionSatelliteLayer, style);
+        BukamaluMap.updateStyleButtons(style, '#mapState .map-style-btn');
     }
     
     function updateLocationDisplay() {

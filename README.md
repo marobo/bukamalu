@@ -85,8 +85,11 @@ For production, make sure to:
 ### Environment Variables
 
 ```bash
-DJANGO_SECRET_KEY=your-secret-key-here
+SECRET_KEY=your-secret-key-here
 DEBUG=False
+ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+# Optional: Mapbox map tiles (get a public token at https://account.mapbox.com/)
+MAPBOX_ACCESS_TOKEN=pk.your_mapbox_public_token
 ```
 
 ## Project Structure
