@@ -1,0 +1,33 @@
+{
+  "name": "Bukamalu",
+  "short_name": "Bukamalu",
+  "description": "Share your location with one click. Send a link to see each other on the map.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a5f4a",
+  "theme_color": "#1a5f4a",
+  "icons": [
+    {
+      "src": "/static/img/bukamalu_icon_16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/img/bukamalu_icon_32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/img/bukamalu_icon_180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/img/bukamalu_icon_180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
