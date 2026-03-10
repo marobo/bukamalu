@@ -41,13 +41,15 @@
     
     <!-- Map Selection State -->
     <div id="mapState" class="map-selection-page hidden">
-        <div id="selectionMap" class="selection-map"></div>
+        <div class="selection-map-wrapper">
+            <div id="selectionMap" class="selection-map"></div>
+        </div>
         
         <!-- Location info overlay -->
         <div class="location-info-bar">
-            <div class="location-text">
-                <span class="location-icon">📍</span>
-                <span id="locationCoords">Drag marker or tap to adjust</span>
+            <div class="map-style-toggle" role="group" aria-label="Map style">
+                <button type="button" class="map-style-btn active" data-style="default" onclick="switchSelectionMapStyle('default')">Default</button>
+                <button type="button" class="map-style-btn" data-style="satellite" onclick="switchSelectionMapStyle('satellite')">Satelite</button>
             </div>
             <button id="recenterBtn" class="btn-icon-only" onclick="recenterToMyLocation()" title="Use my location">
                 🎯
@@ -61,11 +63,11 @@
         
         <!-- Bottom action bar -->
         <div class="map-action-bar">
-            <button class="btn-text-back" onclick="goBack()">
-                ← Back
-            </button>
             <button id="confirmBtn" class="btn-primary btn-confirm" onclick="confirmLocation()">
                 <span>✓</span> SHARE THIS LOCATION
+            </button>
+            <button class="btn-text-back" onclick="goBack()">
+                Cancel
             </button>
         </div>
     </div>
@@ -117,12 +119,15 @@
 <script>
     let currentSessionCode = null;
     let selectionMap = null;
+    let selectionDefaultLayer = null;
+    let selectionSatelliteLayer = null;
     let selectionMarker = null;
     let selectedLat = null;
     let selectedLng = null;
+    const MAPBOX_TOKEN = '{{ mapbox_token|escapejs }}';
     
-    // Default center (will be overwritten by GPS or user selection)
-    const DEFAULT_CENTER = [-6.2088, 106.8456]; // Jakarta as fallback
+    // Default center when GPS unavailable or denied
+    const DEFAULT_CENTER = [-8.5585, 125.5785]; // Dili, Timor-Leste
     
     // Custom marker icon for selection
     const selectionIcon = L.divIcon({
@@ -227,11 +232,10 @@
             attributionControl: true
         }).setView([lat, lng], 16);
         
-        // Add OpenStreetMap tiles
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap',
-            maxZoom: 19
-        }).addTo(selectionMap);
+        var layers = BukamaluMap.createTileLayers(MAPBOX_TOKEN);
+        selectionDefaultLayer = layers.defaultLayer;
+        selectionSatelliteLayer = layers.satelliteLayer;
+        selectionDefaultLayer.addTo(selectionMap);
         
         // Add draggable marker
         selectionMarker = L.marker([lat, lng], {
@@ -261,6 +265,11 @@
                 setTimeout(() => markerEl.classList.remove('marker-bounce'), 300);
             }
         });
+    }
+    
+    function switchSelectionMapStyle(style) {
+        BukamaluMap.switchStyle(selectionMap, selectionDefaultLayer, selectionSatelliteLayer, style);
+        BukamaluMap.updateStyleButtons(style, '#mapState .map-style-btn');
     }
     
     function updateLocationDisplay() {
