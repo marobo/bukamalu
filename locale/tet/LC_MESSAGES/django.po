@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-11 11:38+0900\n"
+"POT-Creation-Date: 2026-03-11 16:19+0900\n"
 "PO-Revision-Date: 2026-03-11 14:52+0900\n"
 "Last-Translator:   <onorio.dja@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,9 +19,231 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
-msgid ""
-"Share your location with one click. Send a link to see each other on the "
-"map."
+msgid "Share your location with one click. Send a link to see each other on the map."
+msgstr "Fahe ita-boot nia lokalizasaun ho klik dala ida de'it. Haruka link hodi bele haree malu iha mapa."
+
+msgid "Bukamalu – Share your location with one click"
 msgstr ""
-"Fahe ita-boot nia lokalizasaun ho klik dala ida de'it. Haruka link hodi bele"
-" haree malu iha mapa."
+
+msgid "Bukamalu - Share My Location"
+msgstr ""
+
+#, fuzzy
+#| msgid "Share your location with one click. Send a link to see each other on the map."
+msgid "Share your location with one click"
+msgstr "Fahe ita-boot nia lokalizasaun ho klik dala ida de'it. Haruka link hodi bele haree malu iha mapa."
+
+msgid "USE MY LOCATION"
+msgstr ""
+
+msgid "or"
+msgstr ""
+
+msgid "PICK ON MAP"
+msgstr ""
+
+msgid "Use GPS or tap on the map to select location"
+msgstr ""
+
+msgid "Getting your location..."
+msgstr ""
+
+msgid "Map style"
+msgstr ""
+
+msgid "Default"
+msgstr ""
+
+msgid "Satellite"
+msgstr ""
+
+msgid "Use my location"
+msgstr ""
+
+msgid "Tap anywhere on the map to move the pin"
+msgstr ""
+
+msgid "SHARE THIS LOCATION"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Link Created!"
+msgstr ""
+
+msgid "COPY"
+msgstr ""
+
+msgid "View Map"
+msgstr ""
+
+msgid "Location shared for 2 hours only"
+msgstr ""
+
+msgid "Share a different location"
+msgstr ""
+
+msgid "Cannot Get Location"
+msgstr ""
+
+msgid "Please allow location access and try again."
+msgstr ""
+
+msgid "PICK ON MAP INSTEAD"
+msgstr ""
+
+msgid "Try Again"
+msgstr ""
+
+msgid "Geolocation is not supported by your browser."
+msgstr ""
+
+msgid "Could not get your location."
+msgstr ""
+
+msgid "Please allow location access or pick location manually."
+msgstr ""
+
+msgid "Location information is unavailable."
+msgstr ""
+
+msgid "Location request timed out."
+msgstr ""
+
+msgid "Geolocation not supported"
+msgstr ""
+
+msgid "Could not get your current location"
+msgstr ""
+
+msgid "Please select a location first"
+msgstr ""
+
+msgid "Creating..."
+msgstr ""
+
+msgid "Network error. Please try again."
+msgstr ""
+
+msgid "My location: "
+msgstr ""
+
+msgid "COPIED!"
+msgstr ""
+
+msgid "Bukamalu - My Shared Location"
+msgstr ""
+
+msgid "Your live location is being shared. See the map and when the visitor joins."
+msgstr ""
+
+msgid "My shared location – Bukamalu"
+msgstr ""
+
+msgid "Session Expired"
+msgstr ""
+
+msgid "This location sharing session has expired or been stopped."
+msgstr ""
+
+msgid "Create New Share Link"
+msgstr ""
+
+msgid "Map"
+msgstr ""
+
+msgid "You"
+msgstr ""
+
+msgid "Visitor"
+msgstr ""
+
+msgid "Waiting for visitor to open the link..."
+msgstr ""
+
+msgid "SHARE LINK AGAIN"
+msgstr ""
+
+msgid "STOP"
+msgstr ""
+
+msgid "Your Location"
+msgstr ""
+
+msgid "Visitor Location"
+msgstr ""
+
+msgid "Visitor is now sharing their location!"
+msgstr ""
+
+msgid "My Location"
+msgstr ""
+
+msgid "Link copied to clipboard!"
+msgstr ""
+
+msgid "Share URL: "
+msgstr ""
+
+msgid "Stop sharing your location? The visitor will no longer see your location."
+msgstr ""
+
+msgid "Sharing stopped"
+msgstr ""
+
+msgid "Session has ended"
+msgstr ""
+
+msgid " m away"
+msgstr ""
+
+msgid " km away"
+msgstr ""
+
+msgid "Bukamalu - View Location"
+msgstr ""
+
+msgid "Someone is sharing their location with you. Open the link to see them on the map and share your location too."
+msgstr ""
+
+msgid "View shared location – Bukamalu"
+msgstr ""
+
+msgid "This location sharing link has expired or been stopped."
+msgstr ""
+
+msgid "Share Your Own Location"
+msgstr ""
+
+msgid "Share Your Location"
+msgstr ""
+
+#, fuzzy
+#| msgid "Share your location with one click. Send a link to see each other on the map."
+msgid "Allow location access so both of you can see each other on the map."
+msgstr "Fahe ita-boot nia lokalizasaun ho klik dala ida de'it. Haruka link hodi bele haree malu iha mapa."
+
+msgid "ALLOW LOCATION"
+msgstr ""
+
+msgid "Skip (View Only)"
+msgstr ""
+
+msgid "Host"
+msgstr ""
+
+msgid "STOP SHARING"
+msgstr ""
+
+msgid "Host Location"
+msgstr ""
+
+msgid "Could not get your location"
+msgstr ""
+
+msgid "Viewing host location only"
+msgstr ""
+
+msgid "Stop sharing your location?"
+msgstr ""

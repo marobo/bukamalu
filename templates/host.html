@@ -1,28 +1,29 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Bukamalu - My Shared Location{% endblock %}
-{% block meta_description %}Your live location is being shared. See the map and when the visitor joins.{% endblock %}
-{% block meta_og_title %}My shared location – Bukamalu{% endblock %}
-{% block meta_og_description %}Your live location is being shared. See the map and when the visitor joins.{% endblock %}
-{% block meta_twitter_title %}My shared location – Bukamalu{% endblock %}
-{% block meta_twitter_description %}Your live location is being shared. See the map and when the visitor joins.{% endblock %}
+{% block title %}{% trans "Bukamalu - My Shared Location" %}{% endblock %}
+{% block meta_description %}{% trans "Your live location is being shared. See the map and when the visitor joins." %}{% endblock %}
+{% block meta_og_title %}{% trans "My shared location – Bukamalu" %}{% endblock %}
+{% block meta_og_description %}{% trans "Your live location is being shared. See the map and when the visitor joins." %}{% endblock %}
+{% block meta_twitter_title %}{% trans "My shared location – Bukamalu" %}{% endblock %}
+{% block meta_twitter_description %}{% trans "Your live location is being shared. See the map and when the visitor joins." %}{% endblock %}
 
 {% block content %}
 {% if not is_valid %}
 <div class="expired-page">
     <div class="expired-icon">⏰</div>
-    <h1>Session Expired</h1>
-    <p>This location sharing session has expired or been stopped.</p>
-    <a href="{% url 'home' %}" class="btn-primary">Create New Share Link</a>
+    <h1>{% trans "Session Expired" %}</h1>
+    <p>{% trans "This location sharing session has expired or been stopped." %}</p>
+    <a href="{% url 'home' %}" class="btn-primary">{% trans "Create New Share Link" %}</a>
 </div>
 {% else %}
 <div class="map-page">
     <!-- Map container -->
     <div class="map-wrapper">
         <div id="map"></div>
-        <div class="map-style-toggle" role="group" aria-label="Map style">
-            <button type="button" class="map-style-btn active" data-style="default" onclick="switchMapStyle('default')">Map</button>
-            <button type="button" class="map-style-btn" data-style="satellite" onclick="switchMapStyle('satellite')">Satellite</button>
+        <div class="map-style-toggle" role="group" aria-label="{% trans 'Map style' %}">
+            <button type="button" class="map-style-btn active" data-style="default" onclick="switchMapStyle('default')">{% trans "Map" %}</button>
+            <button type="button" class="map-style-btn" data-style="satellite" onclick="switchMapStyle('satellite')">{% trans "Satellite" %}</button>
         </div>
     </div>
     
@@ -30,10 +31,10 @@
     <div class="info-bar">
         <div class="legend">
             <span class="legend-item">
-                <span class="marker-icon host-marker">📍</span> You
+                <span class="marker-icon host-marker">📍</span> {% trans "You" %}
             </span>
             <span class="legend-item">
-                <span class="marker-icon visitor-marker">🚶</span> Visitor
+                <span class="marker-icon visitor-marker">🚶</span> {% trans "Visitor" %}
             </span>
         </div>
         <div id="distance" class="distance-info"></div>
@@ -42,16 +43,16 @@
     <!-- Waiting for visitor message -->
     <div id="waitingMessage" class="waiting-banner">
         <div class="spinner-small"></div>
-        <span>Waiting for visitor to open the link...</span>
+        <span>{% trans "Waiting for visitor to open the link..." %}</span>
     </div>
     
     <!-- Bottom actions -->
     <div class="bottom-bar">
         <button class="btn-secondary" onclick="shareAgain()">
-            📤 SHARE LINK AGAIN
+            📤 {% trans "SHARE LINK AGAIN" %}
         </button>
         <button id="stopBtn" class="btn-danger" onclick="stopSharing()">
-            STOP
+            {% trans "STOP" %}
         </button>
     </div>
     
@@ -59,6 +60,22 @@
     <div id="statusMessage" class="status-message hidden"></div>
 </div>
 
+<script>
+window.I18N_HOST = {
+    yourLocation: "{% trans 'Your Location' %}",
+    visitorLocation: "{% trans 'Visitor Location' %}",
+    visitorSharingLocation: "{% trans 'Visitor is now sharing their location!' %}",
+    shareTitle: "{% trans 'My Location' %}",
+    shareText: "{% trans \"I'm sharing my location with you! Click to see where I am:\" %}",
+    linkCopied: "{% trans 'Link copied to clipboard!' %}",
+    shareUrlLabel: "{% trans 'Share URL: ' %}",
+    stopSharingConfirm: "{% trans 'Stop sharing your location? The visitor will no longer see your location.' %}",
+    sharingStopped: "{% trans 'Sharing stopped' %}",
+    sessionEnded: "{% trans 'Session has ended' %}",
+    mAway: "{% trans ' m away' %}",
+    kmAway: "{% trans ' km away' %}"
+};
+</script>
 <script>
     const SESSION_CODE = '{{ session_code }}';
     const HOST_LAT = {{ host_lat|default:"null" }};
@@ -105,7 +122,7 @@
         // Add host marker
         hostMarker = L.marker([HOST_LAT, HOST_LNG], { icon: hostIcon })
             .addTo(map)
-            .bindPopup('<strong>📍 Your Location</strong>');
+            .bindPopup('<strong>📍 ' + I18N_HOST.yourLocation + '</strong>');
         
         // Start watching host position for updates
         startWatchingHostPosition();
@@ -153,10 +170,10 @@
         if (!visitorMarker) {
             visitorMarker = L.marker([lat, lng], { icon: visitorIcon })
                 .addTo(map)
-                .bindPopup('<strong>🚶 Visitor Location</strong>');
+                .bindPopup('<strong>🚶 ' + I18N_HOST.visitorLocation + '</strong>');
             
             // Show notification
-            showStatus('Visitor is now sharing their location!', 'success');
+            showStatus(I18N_HOST.visitorSharingLocation, 'success');
         } else {
             visitorMarker.setLatLng([lat, lng]);
         }
@@ -244,9 +261,9 @@
     function updateRoadDistance(meters) {
         let distanceText;
         if (meters < 1000) {
-            distanceText = Math.round(meters) + ' m away';
+            distanceText = Math.round(meters) + I18N_HOST.mAway;
         } else {
-            distanceText = (meters / 1000).toFixed(1) + ' km away';
+            distanceText = (meters / 1000).toFixed(1) + I18N_HOST.kmAway;
         }
         document.getElementById('distance').textContent = distanceText;
     }
@@ -263,9 +280,9 @@
         
         let distanceText;
         if (distance < 1000) {
-            distanceText = Math.round(distance) + ' m away';
+            distanceText = Math.round(distance) + I18N_HOST.mAway;
         } else {
-            distanceText = (distance / 1000).toFixed(1) + ' km away';
+            distanceText = (distance / 1000).toFixed(1) + I18N_HOST.kmAway;
         }
         
         document.getElementById('distance').textContent = distanceText;
@@ -332,7 +349,7 @@
         if (watchId) {
             navigator.geolocation.clearWatch(watchId);
         }
-        showStatus('Session has ended', 'warning');
+        showStatus(I18N_HOST.sessionEnded, 'warning');
         setTimeout(() => {
             window.location.href = BUKAMALU_API_BASE;
         }, 3000);
@@ -342,8 +359,8 @@
         // Try to use native share if available
         if (navigator.share) {
             navigator.share({
-                title: 'My Location',
-                text: 'I\'m sharing my location with you! Click to see where I am:',
+                title: I18N_HOST.shareTitle,
+                text: I18N_HOST.shareText,
                 url: SHARE_URL
             }).catch(() => {
                 // Fallback to copy
@@ -356,14 +373,14 @@
     
     function copyShareLink() {
         navigator.clipboard.writeText(SHARE_URL).then(() => {
-            showStatus('Link copied to clipboard!', 'success');
+            showStatus(I18N_HOST.linkCopied, 'success');
         }).catch(() => {
-            showStatus('Share URL: ' + SHARE_URL, 'info');
+            showStatus(I18N_HOST.shareUrlLabel + SHARE_URL, 'info');
         });
     }
     
     function stopSharing() {
-        if (confirm('Stop sharing your location? The visitor will no longer see your location.')) {
+        if (confirm(I18N_HOST.stopSharingConfirm)) {
             if (watchId) {
                 navigator.geolocation.clearWatch(watchId);
             }
@@ -372,7 +389,7 @@
             fetch(BUKAMALU_API_BASE + 'api/stop/' + SESSION_CODE, {
                 method: 'POST'
             }).then(() => {
-                showStatus('Sharing stopped', 'success');
+                showStatus(I18N_HOST.sharingStopped, 'success');
                 setTimeout(() => {
                     window.location.href = BUKAMALU_API_BASE;
                 }, 2000);
