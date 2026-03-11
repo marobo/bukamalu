@@ -50,6 +50,17 @@
         return match ? match[0] : '/';
     })();
     </script>
+    <nav class="lang-switcher" aria-label="{% trans 'Language' %}">
+        {% get_current_language as current_lang %}
+        {% for code, name in LANGUAGES %}
+            {% if path_without_lang %}
+                <a href="/{{ code }}/{{ path_without_lang }}" class="lang-link{% if code == current_lang %} active{% endif %}" hreflang="{{ code }}">{{ name }}</a>
+            {% else %}
+                <a href="/{{ code }}/" class="lang-link{% if code == current_lang %} active{% endif %}" hreflang="{{ code }}">{{ name }}</a>
+            {% endif %}
+            {% if not forloop.last %}<span class="lang-sep" aria-hidden="true">|</span>{% endif %}
+        {% endfor %}
+    </nav>
     <div class="container">
         {% block content %}{% endblock %}
     </div>

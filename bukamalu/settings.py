@@ -58,6 +58,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'bukamalu.context_processors.mapbox_token',
+                'bukamalu.context_processors.language_switcher',
                 'django.template.context_processors.i18n',
             ],
         },
