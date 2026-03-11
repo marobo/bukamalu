@@ -43,13 +43,18 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
+    <script>
+    window.BUKAMALU_API_BASE = (function() {
+        var p = window.location.pathname;
+        var match = p.match(/^\/[^/]+\//);
+        return match ? match[0] : '/';
+    })();
+    </script>
     <div class="container">
         {% block content %}{% endblock %}
     </div>
     
-    {% load static %}
     <script src="{% static 'js/map.js' %}"></script>
-    <script src="{% static 'js/location.js' %}"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

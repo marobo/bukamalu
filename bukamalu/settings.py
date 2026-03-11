@@ -78,7 +78,6 @@ DATABASES = {
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Dili'
 USE_I18N = True
-USE_L10N = True
 USE_TZ = True
 
 LANGUAGES = [
@@ -86,7 +85,7 @@ LANGUAGES = [
     ('tet', 'Tetun'),
 ]
 
-# Add extra languages not provide by django
+# Add extra languages not provided by Django
 EXTRA_LANG_INFO = {
     'tet': {
         'bidi': False,

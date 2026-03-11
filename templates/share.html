@@ -13,7 +13,7 @@
     <div class="expired-icon">⏰</div>
     <h1>Session Expired</h1>
     <p>This location sharing link has expired or been stopped.</p>
-    <a href="/" class="btn-primary">Share Your Own Location</a>
+    <a href="{% url 'home' %}" class="btn-primary">Share Your Own Location</a>
 </div>
 {% else %}
 <div class="map-page">
@@ -315,7 +315,7 @@
     }
     
     function sendLocationToServer(lat, lng) {
-        fetch('/api/update/' + SESSION_CODE, {
+        fetch(BUKAMALU_API_BASE + 'api/update/' + SESSION_CODE, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -333,7 +333,7 @@
     }
     
     function fetchLocations() {
-        fetch('/api/locations/' + SESSION_CODE)
+        fetch(BUKAMALU_API_BASE + 'api/locations/' + SESSION_CODE)
             .then(response => {
                 if (response.status === 410) {
                     // Session expired
@@ -372,7 +372,7 @@
         }
         showStatus('Session has ended', 'warning');
         setTimeout(() => {
-            window.location.href = '/';
+            window.location.href = BUKAMALU_API_BASE;
         }, 3000);
     }
     
@@ -385,13 +385,13 @@
             clearInterval(updateInterval);
             
             // Notify server
-            fetch('/api/stop/' + SESSION_CODE, {
+            fetch(BUKAMALU_API_BASE + 'api/stop/' + SESSION_CODE, {
                 method: 'POST'
             }).then(() => {
                 showStatus('Sharing stopped', 'success');
                 setTimeout(() => {
-                    window.location.href = '/';
-                }, 2000);
+window.location.href = BUKAMALU_API_BASE;
+            }, 2000);
             });
         }
     }

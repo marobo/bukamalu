@@ -34,8 +34,11 @@ def create_session(request):
         session.host_last_update = session.created_at
         session.save(update_fields=['host_last_update'])
         
-        # Build the share URL
-        share_url = request.build_absolute_uri(f'/share/{session.session_code}')
+        # Build the share URL (include language prefix when using i18n)
+        path_parts = request.path.strip('/').split('/')
+        prefix = f'/{path_parts[0]}' if path_parts and path_parts[0] != 'api' else ''
+        share_path = f'{prefix}/share/{session.session_code}'
+        share_url = request.build_absolute_uri(share_path)
         
         return JsonResponse({
             'success': True,

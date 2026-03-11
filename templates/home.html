@@ -222,8 +222,6 @@
             selectionMap.setView([lat, lng], 16);
             selectionMarker.setLatLng([lat, lng]);
         }
-        
-        updateLocationDisplay();
     }
     
     function initSelectionMap(lat, lng) {
@@ -248,7 +246,6 @@
             const pos = e.target.getLatLng();
             selectedLat = pos.lat;
             selectedLng = pos.lng;
-            updateLocationDisplay();
         });
         
         // Handle map click to move marker
@@ -256,7 +253,6 @@
             selectedLat = e.latlng.lat;
             selectedLng = e.latlng.lng;
             selectionMarker.setLatLng(e.latlng);
-            updateLocationDisplay();
             
             // Add a little bounce animation feedback
             const markerEl = selectionMarker.getElement();
@@ -270,15 +266,6 @@
     function switchSelectionMapStyle(style) {
         BukamaluMap.switchStyle(selectionMap, selectionDefaultLayer, selectionSatelliteLayer, style);
         BukamaluMap.updateStyleButtons(style, '#mapState .map-style-btn');
-    }
-    
-    function updateLocationDisplay() {
-        const coordsEl = document.getElementById('locationCoords');
-        if (selectedLat && selectedLng) {
-            const latStr = selectedLat.toFixed(6);
-            const lngStr = selectedLng.toFixed(6);
-            coordsEl.textContent = `${latStr}, ${lngStr}`;
-        }
     }
     
     function recenterToMyLocation() {
@@ -296,7 +283,6 @@
                 selectedLng = position.coords.longitude;
                 selectionMap.setView([selectedLat, selectedLng], 16);
                 selectionMarker.setLatLng([selectedLat, selectedLng]);
-                updateLocationDisplay();
                 btn.classList.remove('spinning');
             },
             (error) => {
@@ -322,7 +308,7 @@
         btn.innerHTML = '<span class="spinner-small"></span> Creating...';
         
         // Send to server to create session
-        fetch('/api/create-session', {
+        fetch(BUKAMALU_API_BASE + 'api/create-session', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -350,7 +336,7 @@
     
     function showShareLink(url, sessionCode) {
         document.getElementById('shareLink').value = url;
-        document.getElementById('viewMapLink').href = '/host/' + sessionCode;
+        document.getElementById('viewMapLink').href = BUKAMALU_API_BASE + 'host/' + sessionCode;
         
         // WhatsApp share link
         const whatsappText = encodeURIComponent('I\'m sharing my location with you! Click here to see where I am: ' + url);
