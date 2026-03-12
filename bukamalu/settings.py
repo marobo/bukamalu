@@ -83,7 +83,7 @@ USE_L10N = True
 USE_TZ = True
 
 LANGUAGES = [
-    ('tet', 'Tetun'),
+    ('tet', 'Tetum'),
     ('en', 'English'),
 ]
 
@@ -92,9 +92,9 @@ EXTRA_LANG_INFO = {
     'tet': {
         'bidi': False,
         'code': 'tet',
-        'name': 'Tetun',
-        'local_name': 'Tetun',
-    },
+        'name': 'Tetum',
+        'name_local': 'Tetum',
+    }
 }
 
 LOCALE_PATHS = [
