@@ -15,8 +15,10 @@
     --gray-50: #f9fafb;
     --gray-100: #f3f4f6;
     --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
     --gray-400: #9ca3af;
     --gray-500: #6b7280;
+    --gray-600: #4b5563;
     --gray-700: #374151;
     --gray-900: #111827;
     --white: #ffffff;
@@ -57,6 +59,49 @@ body {
     max-width: 100%;
     min-height: 100vh;
     min-height: 100dvh;
+    padding-top: 48px; /* space for fixed language switcher */
+}
+
+/* ============================================
+   Language switcher
+   ============================================ */
+.lang-switcher {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 8px 16px;
+    padding-top: max(8px, env(safe-area-inset-top));
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 0.875rem;
+}
+
+.lang-link {
+    color: var(--gray-600);
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.lang-link:hover {
+    color: var(--primary);
+    background: var(--gray-100);
+}
+
+.lang-link.active {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.lang-sep {
+    color: var(--gray-300);
+    margin: 0 2px;
+    user-select: none;
 }
 
 /* ============================================
@@ -625,12 +670,6 @@ body {
 .location-icon {
     font-size: 18px;
     flex-shrink: 0;
-}
-
-#locationCoords {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .btn-icon-only {

@@ -1,0 +1,276 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-12 16:33+0900\n"
+"PO-Revision-Date: 2026-03-12 16:34+0900\n"
+"Last-Translator:   <onorio.dja@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: tet\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Translated-Using: django-rosetta 0.10.3\n"
+
+msgid ""
+"Share your location with one click. Send a link to see each other on the "
+"map."
+msgstr ""
+"Fahe ita-boot nia lokalizasaun ho klik dala ida de'it. Haruka link hodi bele"
+" haree malu iha mapa."
+
+msgid "Bukamalu – Share your location with one click"
+msgstr "Bukamalu - Fahe ita-boot nia lokalizasaun ho klik dala ida deit"
+
+msgid "Language"
+msgstr ""
+
+msgid "Bukamalu - Share My Location"
+msgstr "Bukamalu -  Fahe hau nia lokalizasaun"
+
+msgid "Share your location with one click"
+msgstr " Fahe ita-boot nia lokalizasaun ho klik dala ida deit"
+
+#| msgid "SHARE THIS LOCATION"
+msgid "SHARE MY CURRENT LOCATION"
+msgstr "FAHE LOKALIZASAUN AGORA DAUDAUK"
+
+msgid "or"
+msgstr "ka"
+
+msgid "PICK A LOCATION ON THE MAP"
+msgstr "HILI LOKALIZASAUN IHA MAPA"
+
+msgid "Use GPS or tap on the map to select location"
+msgstr "Uza GPS ka klik iha mapa hodi hili lokalizasaun"
+
+msgid "Getting your location..."
+msgstr "Buka hela ita-boot nia lokalizasaun..."
+
+msgid "Map style"
+msgstr "Estilu Mapa"
+
+msgid "Default"
+msgstr "Default"
+
+msgid "Satellite"
+msgstr "Satellite"
+
+msgid "Use my location"
+msgstr "Uza hau-nia lokalizasaun"
+
+msgid "Tap anywhere on the map to move the pin"
+msgstr "Klik iha fatin ne'ebé de'it iha mapa hodi muda pin"
+
+msgid "SHARE THIS LOCATION"
+msgstr "FAHE LOKALIZASAUN IDA NEE"
+
+msgid "Cancel"
+msgstr "Kansela"
+
+msgid "Link Created!"
+msgstr "Link Kria Ona!"
+
+msgid "COPY"
+msgstr "KOPIA"
+
+msgid "View Map"
+msgstr "Haree Mapa"
+
+msgid "Location shared for 2 hours only"
+msgstr "Lokalizasaun ou fatin fahe ba oras 2 de'it"
+
+msgid "Share a different location"
+msgstr "Fahe lokalizasaun seluk"
+
+msgid "Cannot Get Location"
+msgstr "Lokalizasaun La Hetan"
+
+msgid "Please allow location access and try again."
+msgstr "Favór permite asesu ba lokalizasaun no koko fali."
+
+msgid "PICK ON MAP INSTEAD"
+msgstr "HILI IHA MAPA DEIT"
+
+msgid "Try Again"
+msgstr "Koko Fali"
+
+msgid "Geolocation is not supported by your browser."
+msgstr "Geolocation la hetan suporta husi ita-boot nia browser."
+
+msgid "Could not get your location."
+msgstr "La konsege hetan ita-boot nia lokalizasaun."
+
+msgid "Please allow location access or pick location manually."
+msgstr "Favór permite asesu ba lokalizasaun ka hili lokalizasaun manualmente."
+
+msgid "Location information is unavailable."
+msgstr "Informasaun kona-ba fatin la disponivel."
+
+msgid "Location request timed out."
+msgstr "Pedidu lokalizasaun nian liu ona tempu."
+
+msgid "Geolocation not supported"
+msgstr "Geolocation la suporta"
+
+msgid "Could not get your current location"
+msgstr "La hetan ita-nia lokalizasaun agora dau-dauk"
+
+msgid "Please select a location first"
+msgstr "Favór hili uluk ita-nia lokalizasaun"
+
+msgid "Creating..."
+msgstr "Kria hela..."
+
+msgid "Network error. Please try again."
+msgstr "Network error. Favór koko fali."
+
+msgid "I am sharing my location with you! Click here to see where I am: "
+msgstr ""
+
+msgid "My location: "
+msgstr "Hau nia lokalizasaun:"
+
+msgid "COPIED!"
+msgstr "KOPIA ONA!"
+
+msgid "Bukamalu - My Shared Location"
+msgstr "Bukamalu - Hau nia lokalizasaun ne'ebé fahe"
+
+msgid ""
+"Your live location is being shared. See the map and when the visitor joins."
+msgstr ""
+"Ita-boot nia lokalizasaun fahe hela. Haree mapa no bainhira vizitante join."
+
+msgid "My shared location – Bukamalu"
+msgstr "Hau nia lokalizasaun ne'ebé fahe - Bukamalu"
+
+msgid "Session Expired"
+msgstr "Sesaun Expira Ona"
+
+msgid "This location sharing session has expired or been stopped."
+msgstr "Sesaun fahe lokalizasaun ida-ne'e expira ka paradu tiha ona."
+
+msgid "Create New Share Link"
+msgstr "Kria Link Foun"
+
+msgid "Map"
+msgstr "Mapa"
+
+msgid "You"
+msgstr "Hau"
+
+msgid "Visitor"
+msgstr "Vizitante"
+
+msgid "Waiting for visitor to open the link..."
+msgstr "Hein hela vizitante atu loke link..."
+
+msgid "SHARE LINK AGAIN"
+msgstr "FAHE FALI LINK"
+
+msgid "STOP"
+msgstr "STOP"
+
+msgid "Your Location"
+msgstr "Ita-nia Lokalizasaun"
+
+msgid "Visitor Location"
+msgstr "Lokalizasaun Vizitante"
+
+msgid "Visitor is now sharing their location!"
+msgstr "Vizitante agora dadauk fahe hela sira-nia lokalizasaun!"
+
+msgid "My Location"
+msgstr "Hau-nia Lokalizasaun"
+
+msgid "I am sharing my location with you! Click to see where I am:"
+msgstr ""
+
+msgid "Link copied to clipboard!"
+msgstr "Link kopia ona ba clipboard!"
+
+msgid "Share URL: "
+msgstr "Fahe URL:"
+
+msgid ""
+"Stop sharing your location? The visitor will no longer see your location."
+msgstr ""
+"Hapara fahe ita-boot nia lokalizasaun? Vizitante sei la haree tan ita-boot "
+"nia lokalizasaun."
+
+msgid "Sharing stopped"
+msgstr "Hapara ona"
+
+msgid "Session has ended"
+msgstr "Sesaun remata ona"
+
+msgid " m away"
+msgstr "m dook"
+
+msgid " km away"
+msgstr "km dook"
+
+msgid "Bukamalu - View Location"
+msgstr "Bukamalu - Haree Fatin"
+
+msgid ""
+"Someone is sharing their location with you. Open the link to see them on the"
+" map and share your location too."
+msgstr ""
+"Ema ida fahe hela sira nia lokalizasaun ho ita-boot. Loke ligasaun atu haree"
+" sira iha mapa no fahe mós ita-boot nia lokalizasaun."
+
+msgid "View shared location – Bukamalu"
+msgstr "Haree fatin ne'ebé fahe ona – Bukamalu"
+
+msgid "This location sharing link has expired or been stopped."
+msgstr "Ligasaun fahe lokalizasaun ida-ne'e expira ona ka paradu ona."
+
+msgid "Share Your Own Location"
+msgstr "Fahe Ita-boot nia Fatin Rasik"
+
+msgid "Share Your Location"
+msgstr "Fahe Ita-boot nia lokalizasaun"
+
+msgid "Allow location access so both of you can see each other on the map."
+msgstr ""
+"Permite asesu ba lokalizasaun atu nune'e imi na'in-rua bele haree malu iha "
+"mapa."
+
+msgid "ALLOW LOCATION"
+msgstr "PERMITE LOKALIZASAUN"
+
+msgid "Skip (View Only)"
+msgstr "Labele (Haree Deit)"
+
+msgid "Host"
+msgstr "Vizitante"
+
+msgid "STOP SHARING"
+msgstr "HAPARS SHARING"
+
+msgid "Host Location"
+msgstr "Lokalizasaun Vizitante "
+
+msgid "Could not get your location"
+msgstr "La hetan ita-boot nia lokalizasaun"
+
+msgid "Viewing host location only"
+msgstr "Haree de'it sira nia lokalizasaun"
+
+msgid "Stop sharing your location?"
+msgstr "Hapara fahe ita-boot nia lokalizasaun?"
+
+#~ msgid "USE MY LOCATION"
+#~ msgstr "FAHE LOKALIZASAUN AGORA DADAUK"
+
+#~ msgid "PICK ON MAP"
+#~ msgstr "HILI IHA MAPA"
