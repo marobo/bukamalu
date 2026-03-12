@@ -15,6 +15,6 @@ urlpatterns = i18n_patterns(
 )
 
 if 'rosetta' in settings.INSTALLED_APPS:
-    urlpatterns += i18n_patterns(
+    urlpatterns += [
         path('rosetta/', include('rosetta.urls')),
-    )
+    ]
