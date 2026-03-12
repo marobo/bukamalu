@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-11 16:19+0900\n"
-"PO-Revision-Date: 2026-03-11 17:13+0900\n"
+"POT-Creation-Date: 2026-03-12 16:33+0900\n"
+"PO-Revision-Date: 2026-03-12 16:34+0900\n"
 "Last-Translator:   <onorio.dja@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: tet\n"
@@ -29,23 +29,24 @@ msgstr ""
 msgid "Bukamalu – Share your location with one click"
 msgstr "Bukamalu - Fahe ita-boot nia lokalizasaun ho klik dala ida deit"
 
+msgid "Language"
+msgstr ""
+
 msgid "Bukamalu - Share My Location"
 msgstr "Bukamalu -  Fahe hau nia lokalizasaun"
 
-#| msgid ""
-#| "Share your location with one click. Send a link to see each other on the "
-#| "map."
 msgid "Share your location with one click"
 msgstr " Fahe ita-boot nia lokalizasaun ho klik dala ida deit"
 
-msgid "USE MY LOCATION"
-msgstr "FAHE LOKALIZASAUN AGORA DADAUK"
+#| msgid "SHARE THIS LOCATION"
+msgid "SHARE MY CURRENT LOCATION"
+msgstr "FAHE LOKALIZASAUN AGORA DAUDAUK"
 
 msgid "or"
 msgstr "ka"
 
-msgid "PICK ON MAP"
-msgstr "HILI IHA MAPA"
+msgid "PICK A LOCATION ON THE MAP"
+msgstr "HILI LOKALIZASAUN IHA MAPA"
 
 msgid "Use GPS or tap on the map to select location"
 msgstr "Uza GPS ka klik iha mapa hodi hili lokalizasaun"
@@ -131,6 +132,9 @@ msgstr "Kria hela..."
 msgid "Network error. Please try again."
 msgstr "Network error. Favór koko fali."
 
+msgid "I am sharing my location with you! Click here to see where I am: "
+msgstr ""
+
 msgid "My location: "
 msgstr "Hau nia lokalizasaun:"
 
@@ -187,6 +191,9 @@ msgstr "Vizitante agora dadauk fahe hela sira-nia lokalizasaun!"
 msgid "My Location"
 msgstr "Hau-nia Lokalizasaun"
 
+msgid "I am sharing my location with you! Click to see where I am:"
+msgstr ""
+
 msgid "Link copied to clipboard!"
 msgstr "Link kopia ona ba clipboard!"
 
@@ -233,9 +240,6 @@ msgstr "Fahe Ita-boot nia Fatin Rasik"
 msgid "Share Your Location"
 msgstr "Fahe Ita-boot nia lokalizasaun"
 
-#| msgid ""
-#| "Share your location with one click. Send a link to see each other on the "
-#| "map."
 msgid "Allow location access so both of you can see each other on the map."
 msgstr ""
 "Permite asesu ba lokalizasaun atu nune'e imi na'in-rua bele haree malu iha "
@@ -264,3 +268,9 @@ msgstr "Haree de'it sira nia lokalizasaun"
 
 msgid "Stop sharing your location?"
 msgstr "Hapara fahe ita-boot nia lokalizasaun?"
+
+#~ msgid "USE MY LOCATION"
+#~ msgstr "FAHE LOKALIZASAUN AGORA DADAUK"
+
+#~ msgid "PICK ON MAP"
+#~ msgstr "HILI IHA MAPA"
