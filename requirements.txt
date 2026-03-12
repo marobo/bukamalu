@@ -1,4 +1,5 @@
 Django>=4.2,<5.0
+django-rosetta>=0.10.3
 python-decouple
 gunicorn>=23.0.0
 whitenoise
