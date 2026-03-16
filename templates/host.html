@@ -14,7 +14,7 @@
     <div class="expired-icon">⏰</div>
     <h1>{% trans "Session Expired" %}</h1>
     <p>{% trans "This location sharing session has expired or been stopped." %}</p>
-    <a href="{% url 'home' %}" class="btn-primary">{% trans "Create New Share Link" %}</a>
+    <a href="{% url 'home' %}" class="btn-primary">{% trans "Share New Location" %}</a>
 </div>
 {% else %}
 <div class="map-page">
@@ -22,8 +22,8 @@
     <div class="map-wrapper">
         <div id="map"></div>
         <div class="map-style-toggle" role="group" aria-label="{% trans 'Map style' %}">
-            <button type="button" class="map-style-btn active" data-style="default" onclick="switchMapStyle('default')">{% trans "Map" %}</button>
-            <button type="button" class="map-style-btn" data-style="satellite" onclick="switchMapStyle('satellite')">{% trans "Satellite" %}</button>
+            <button type="button" class="map-style-btn active" data-style="default" onclick="switchMapStyle('default')"><span>🗺️</span> {% trans "Map" %}</button>
+            <button type="button" class="map-style-btn" data-style="satellite" onclick="switchMapStyle('satellite')"><span>🌍</span> {% trans "Satellite" %}</button>
         </div>
     </div>
     
@@ -49,10 +49,10 @@
     <!-- Bottom actions -->
     <div class="bottom-bar">
         <button class="btn-secondary" onclick="shareAgain()">
-            📤 {% trans "SHARE LINK AGAIN" %}
+            <span>🔗</span> {% trans "SHARE LINK AGAIN" %}
         </button>
         <button id="stopBtn" class="btn-danger" onclick="stopSharing()">
-            {% trans "STOP" %}
+            <span>🛑</span> {% trans "STOP" %}
         </button>
     </div>
     

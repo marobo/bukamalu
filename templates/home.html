@@ -17,8 +17,8 @@
         
         <div class="action-options">
             <button id="gpsBtn" class="btn-primary btn-large" onclick="useMyLocation()">
-                <span class="btn-icon">🎯</span>
-                <span class="btn-text">{% trans "SHARE MY CURRENT LOCATION" %}</span>
+                <span class="btn-icon">📍</span>
+                <span class="btn-text">{% trans "MY CURRENT LOCATION" %}</span>
             </button>
             
             <div class="divider">
@@ -27,10 +27,10 @@
             
             <button id="pickBtn" class="btn-secondary btn-large-outline" onclick="pickOnMap()">
                 <span class="btn-icon">🗺️</span>
-                <span class="btn-text">{% trans "PICK A LOCATION ON THE MAP" %}</span>
+                <span class="btn-text">{% trans "PICK ON THE MAP" %}</span>
             </button>
             
-            <p class="hint">{% trans "Use GPS or tap on the map to select location" %}</p>
+            <p class="hint">{% trans "Use GPS or tap on the map to select location." %}</p>
         </div>
     </div>
     
@@ -49,26 +49,27 @@
         <!-- Location info overlay -->
         <div class="location-info-bar">
             <div class="map-style-toggle" role="group" aria-label="{% trans 'Map style' %}">
-                <button type="button" class="map-style-btn active" data-style="default" onclick="switchSelectionMapStyle('default')">{% trans "Default" %}</button>
-                <button type="button" class="map-style-btn" data-style="satellite" onclick="switchSelectionMapStyle('satellite')">{% trans "Satellite" %}</button>
+                <button type="button" class="map-style-btn active" data-style="default" onclick="switchSelectionMapStyle('default')"><span>🗺️</span> {% trans "Default" %}</button>
+                <button type="button" class="map-style-btn" data-style="satellite" onclick="switchSelectionMapStyle('satellite')"><span>🌍</span> {% trans "Satellite" %}</button>
             </div>
             <button id="recenterBtn" class="btn-icon-only" onclick="recenterToMyLocation()" title="{% trans 'Use my location' %}">
-                🎯
+                <span>📍</span>
             </button>
         </div>
         
         <!-- Search/Address hint -->
         <div class="map-hint">
-            <span>💡</span> {% trans "Tap anywhere on the map to move the pin" %}
+            <span>💡</span> {% trans "Tap anywhere on the map to move the pin." %}
         </div>
         
         <!-- Bottom action bar -->
         <div class="map-action-bar">
             <button id="confirmBtn" class="btn-primary btn-confirm" onclick="confirmLocation()">
-                <span>✓</span> {% trans "SHARE THIS LOCATION" %}
+                <span>🔗</span> {% trans "SHARE THIS LOCATION" %}
             </button>
             <button class="btn-text-back" onclick="goBack()">
-                {% trans "Cancel" %}
+                <span> ⬅️</span>
+                {% trans "BACK" %}
             </button>
         </div>
     </div>

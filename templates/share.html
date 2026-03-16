@@ -37,8 +37,8 @@
     <div class="map-wrapper">
         <div id="map"></div>
         <div class="map-style-toggle" role="group" aria-label="{% trans 'Map style' %}">
-            <button type="button" class="map-style-btn active" data-style="default" onclick="switchMapStyle('default')">{% trans "Map" %}</button>
-            <button type="button" class="map-style-btn" data-style="satellite" onclick="switchMapStyle('satellite')">{% trans "Satellite" %}</button>
+            <button type="button" class="map-style-btn active" data-style="default" onclick="switchMapStyle('default')"><span>🗺️</span> {% trans "Map" %}</button>
+            <button type="button" class="map-style-btn" data-style="satellite" onclick="switchMapStyle('satellite')"><span>🌍</span> {% trans "Satellite" %}</button>
         </div>
     </div>
     
@@ -58,7 +58,7 @@
     <!-- Bottom actions -->
     <div class="bottom-bar">
         <button id="stopBtn" class="btn-danger" onclick="stopSharing()">
-            {% trans "STOP SHARING" %}
+            <span>🛑</span> {% trans "STOP SHARING" %}
         </button>
     </div>
     
