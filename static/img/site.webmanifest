@@ -1,7 +1,7 @@
 {
   "name": "Bukamalu",
   "short_name": "Bukamalu",
-  "description": "Share your location with one click. Send a link to see each other on the map.",
+  "description": "Share your location link to see each other on the map.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1a5f4a",
