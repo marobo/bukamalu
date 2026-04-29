@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Bukamalu - Share My Location{% endblock %}
+{% block title %}{% trans "Bukamalu - Share My Location" %}{% endblock %}
 
 {% block content %}
 <div class="home-page">
@@ -11,32 +12,32 @@
                 <span class="main-icon">📍</span>
             </div>
             <h1>Bukamalu</h1>
-            <p class="subtitle">Share your location with one click</p>
+            <p class="subtitle">{% trans "Share your location link to see each other on the map." %}</p>
         </div>
         
         <div class="action-options">
             <button id="gpsBtn" class="btn-primary btn-large" onclick="useMyLocation()">
-                <span class="btn-icon">🎯</span>
-                <span class="btn-text">USE MY LOCATION</span>
+                <span class="btn-icon">📍</span>
+                <span class="btn-text">{% trans "MY CURRENT LOCATION" %}</span>
             </button>
             
             <div class="divider">
-                <span>or</span>
+                <span>{% trans "or" %}</span>
             </div>
             
             <button id="pickBtn" class="btn-secondary btn-large-outline" onclick="pickOnMap()">
                 <span class="btn-icon">🗺️</span>
-                <span class="btn-text">PICK ON MAP</span>
+                <span class="btn-text">{% trans "PICK ON THE MAP" %}</span>
             </button>
             
-            <p class="hint">Use GPS or tap on the map to select location</p>
+            <p class="hint">{% trans "Use GPS or tap on the map to select location." %}</p>
         </div>
     </div>
     
     <!-- Loading state -->
     <div id="loadingState" class="state-container hidden">
         <div class="spinner"></div>
-        <p>Getting your location...</p>
+        <p>{% trans "Getting your location..." %}</p>
     </div>
     
     <!-- Map Selection State -->
@@ -47,27 +48,28 @@
         
         <!-- Location info overlay -->
         <div class="location-info-bar">
-            <div class="map-style-toggle" role="group" aria-label="Map style">
-                <button type="button" class="map-style-btn active" data-style="default" onclick="switchSelectionMapStyle('default')">Default</button>
-                <button type="button" class="map-style-btn" data-style="satellite" onclick="switchSelectionMapStyle('satellite')">Satelite</button>
+            <div class="map-style-toggle" role="group" aria-label="{% trans 'Map style' %}">
+                <button type="button" class="map-style-btn active" data-style="default" onclick="switchSelectionMapStyle('default')"><span>🗺️</span> {% trans "Default" %}</button>
+                <button type="button" class="map-style-btn" data-style="satellite" onclick="switchSelectionMapStyle('satellite')"><span>🌍</span> {% trans "Satellite" %}</button>
             </div>
-            <button id="recenterBtn" class="btn-icon-only" onclick="recenterToMyLocation()" title="Use my location">
-                🎯
+            <button id="recenterBtn" class="btn-icon-only" onclick="recenterToMyLocation()" title="{% trans 'Use my location' %}">
+                <span>📍</span>
             </button>
         </div>
         
         <!-- Search/Address hint -->
         <div class="map-hint">
-            <span>💡</span> Tap anywhere on the map to move the pin
+            <span>💡</span> {% trans "Tap anywhere on the map to move the pin." %}
         </div>
         
         <!-- Bottom action bar -->
         <div class="map-action-bar">
             <button id="confirmBtn" class="btn-primary btn-confirm" onclick="confirmLocation()">
-                <span>✓</span> SHARE THIS LOCATION
+                <span>🔗</span> {% trans "SHARE THIS LOCATION" %}
             </button>
             <button class="btn-text-back" onclick="goBack()">
-                Cancel
+                <span> ⬅️</span>
+                {% trans "BACK" %}
             </button>
         </div>
     </div>
@@ -75,12 +77,12 @@
     <!-- Success state with share link -->
     <div id="successState" class="state-container hidden">
         <div class="success-icon">✓</div>
-        <h2>Link Created!</h2>
+        <h2>{% trans "Link Created!" %}</h2>
         
         <div class="link-container">
             <input type="text" id="shareLink" readonly class="share-link-input">
             <button id="copyBtn" class="btn-secondary" onclick="copyLink()">
-                <span id="copyText">COPY</span>
+                <span id="copyText">{% trans "COPY" %}</span>
             </button>
         </div>
         
@@ -94,27 +96,47 @@
         </div>
         
         <a id="viewMapLink" href="#" class="btn-primary btn-medium">
-            <span>🗺️</span> View Map
+            <span>🗺️</span> {% trans "View Map" %}
         </a>
         
         <p class="privacy-note">
-            🔒 Location shared for 2 hours only
+            🔒 {% trans "Location shared for 2 hours only" %}
         </p>
         
         <button class="btn-text" onclick="startOver()">
-            Share a different location
+            {% trans "Share a different location" %}
         </button>
     </div>
     
     <!-- Error state -->
     <div id="errorState" class="state-container hidden">
         <div class="error-icon">!</div>
-        <h2>Cannot Get Location</h2>
-        <p id="errorMessage">Please allow location access and try again.</p>
-        <button class="btn-secondary" onclick="retryWithMap()">PICK ON MAP INSTEAD</button>
-        <button class="btn-text" onclick="startOver()">Try Again</button>
+        <h2>{% trans "Cannot Get Location" %}</h2>
+        <p id="errorMessage">{% trans "Please allow location access and try again." %}</p>
+        <button class="btn-secondary" onclick="retryWithMap()">{% trans "PICK ON MAP INSTEAD" %}</button>
+        <button class="btn-text" onclick="startOver()">{% trans "Try Again" %}</button>
     </div>
 </div>
+
+<script>
+window.I18N_HOME = {
+    geolocationNotSupported: "{% trans 'Geolocation is not supported by your browser.' %}",
+    couldNotGetLocation: "{% trans 'Could not get your location.' %}",
+    allowLocationOrPick: "{% trans 'Please allow location access or pick location manually.' %}",
+    locationUnavailable: "{% trans 'Location information is unavailable.' %}",
+    locationTimeout: "{% trans 'Location request timed out.' %}",
+    geolocationNotSupportedShort: "{% trans 'Geolocation not supported' %}",
+    couldNotGetCurrentLocation: "{% trans 'Could not get your current location' %}",
+    pleaseSelectLocation: "{% trans 'Please select a location first' %}",
+    creating: "{% trans 'Creating...' %}",
+    shareThisLocation: "{% trans 'SHARE THIS LOCATION' %}",
+    networkError: "{% trans 'Network error. Please try again.' %}",
+    shareInviteText: "{% trans 'I am sharing my location with you! Click here to see where I am: ' %}",
+    myLocation: "{% trans 'My location: ' %}",
+    copied: "{% trans 'COPIED!' %}",
+    copy: "{% trans 'COPY' %}"
+};
+</script>
 
 <script>
     let currentSessionCode = null;
@@ -156,7 +178,7 @@
         showState('loading');
         
         if (!navigator.geolocation) {
-            showError('Geolocation is not supported by your browser.');
+            showError(I18N_HOME.geolocationNotSupported);
             return;
         }
         
@@ -167,16 +189,16 @@
                 showMapWithLocation(selectedLat, selectedLng);
             },
             (error) => {
-                let message = 'Could not get your location.';
+                let message = I18N_HOME.couldNotGetLocation;
                 switch(error.code) {
                     case error.PERMISSION_DENIED:
-                        message = 'Please allow location access or pick location manually.';
+                        message = I18N_HOME.allowLocationOrPick;
                         break;
                     case error.POSITION_UNAVAILABLE:
-                        message = 'Location information is unavailable.';
+                        message = I18N_HOME.locationUnavailable;
                         break;
                     case error.TIMEOUT:
-                        message = 'Location request timed out.';
+                        message = I18N_HOME.locationTimeout;
                         break;
                 }
                 showError(message);
@@ -222,8 +244,6 @@
             selectionMap.setView([lat, lng], 16);
             selectionMarker.setLatLng([lat, lng]);
         }
-        
-        updateLocationDisplay();
     }
     
     function initSelectionMap(lat, lng) {
@@ -248,7 +268,6 @@
             const pos = e.target.getLatLng();
             selectedLat = pos.lat;
             selectedLng = pos.lng;
-            updateLocationDisplay();
         });
         
         // Handle map click to move marker
@@ -256,7 +275,6 @@
             selectedLat = e.latlng.lat;
             selectedLng = e.latlng.lng;
             selectionMarker.setLatLng(e.latlng);
-            updateLocationDisplay();
             
             // Add a little bounce animation feedback
             const markerEl = selectionMarker.getElement();
@@ -272,18 +290,9 @@
         BukamaluMap.updateStyleButtons(style, '#mapState .map-style-btn');
     }
     
-    function updateLocationDisplay() {
-        const coordsEl = document.getElementById('locationCoords');
-        if (selectedLat && selectedLng) {
-            const latStr = selectedLat.toFixed(6);
-            const lngStr = selectedLng.toFixed(6);
-            coordsEl.textContent = `${latStr}, ${lngStr}`;
-        }
-    }
-    
     function recenterToMyLocation() {
         if (!navigator.geolocation) {
-            alert('Geolocation not supported');
+            alert(I18N_HOME.geolocationNotSupportedShort);
             return;
         }
         
@@ -296,12 +305,11 @@
                 selectedLng = position.coords.longitude;
                 selectionMap.setView([selectedLat, selectedLng], 16);
                 selectionMarker.setLatLng([selectedLat, selectedLng]);
-                updateLocationDisplay();
                 btn.classList.remove('spinning');
             },
             (error) => {
                 btn.classList.remove('spinning');
-                alert('Could not get your current location');
+                alert(I18N_HOME.couldNotGetCurrentLocation);
             },
             {
                 enableHighAccuracy: true,
@@ -313,16 +321,16 @@
     
     function confirmLocation() {
         if (!selectedLat || !selectedLng) {
-            alert('Please select a location first');
+            alert(I18N_HOME.pleaseSelectLocation);
             return;
         }
         
         const btn = document.getElementById('confirmBtn');
         btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-small"></span> Creating...';
+        btn.innerHTML = '<span class="spinner-small"></span> ' + I18N_HOME.creating;
         
         // Send to server to create session
-        fetch('/api/create-session', {
+        fetch(BUKAMALU_API_BASE + 'api/create-session', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -335,29 +343,29 @@
                 currentSessionCode = data.session_code;
                 showShareLink(data.share_url, data.session_code);
             } else {
-                alert(data.error || 'Could not create session');
+                alert(data.error || I18N_HOME.couldNotGetLocation);
                 btn.disabled = false;
-                btn.innerHTML = '<span>✓</span> SHARE THIS LOCATION';
+                btn.innerHTML = '<span>✓</span> ' + I18N_HOME.shareThisLocation;
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Network error. Please try again.');
+            alert(I18N_HOME.networkError);
             btn.disabled = false;
-            btn.innerHTML = '<span>✓</span> SHARE THIS LOCATION';
+            btn.innerHTML = '<span>✓</span> ' + I18N_HOME.shareThisLocation;
         });
     }
     
     function showShareLink(url, sessionCode) {
         document.getElementById('shareLink').value = url;
-        document.getElementById('viewMapLink').href = '/host/' + sessionCode;
+        document.getElementById('viewMapLink').href = BUKAMALU_API_BASE + 'host/' + sessionCode;
         
         // WhatsApp share link
-        const whatsappText = encodeURIComponent('I\'m sharing my location with you! Click here to see where I am: ' + url);
+        const whatsappText = encodeURIComponent(I18N_HOME.shareInviteText + url);
         document.getElementById('whatsappShare').href = 'https://wa.me/?text=' + whatsappText;
         
         // SMS share link
-        const smsText = encodeURIComponent('My location: ' + url);
+        const smsText = encodeURIComponent(I18N_HOME.myLocation + url);
         document.getElementById('smsShare').href = 'sms:?body=' + smsText;
         
         showState('success');
@@ -385,7 +393,7 @@
         const btn = document.getElementById('confirmBtn');
         if (btn) {
             btn.disabled = false;
-            btn.innerHTML = '<span>✓</span> SHARE THIS LOCATION';
+            btn.innerHTML = '<span>✓</span> ' + I18N_HOME.shareThisLocation;
         }
         
         showState('initial');
@@ -398,9 +406,9 @@
         
         navigator.clipboard.writeText(linkInput.value).then(() => {
             const copyText = document.getElementById('copyText');
-            copyText.textContent = 'COPIED!';
+            copyText.textContent = I18N_HOME.copied;
             setTimeout(() => {
-                copyText.textContent = 'COPY';
+                copyText.textContent = I18N_HOME.copy;
             }, 2000);
         }).catch(() => {
             document.execCommand('copy');

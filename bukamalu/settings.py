@@ -3,6 +3,8 @@ Django settings for Bukamalu - Two-Way Location Sharing project.
 """
 
 from pathlib import Path
+
+from django.conf import locale
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -18,15 +20,26 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=lambda v: [s.strip() for s in v.spl
 
 # Application definition
 INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.messages',
+    'django.contrib.sessions',
     'django.contrib.staticfiles',
     'app',
+    'rosetta',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
@@ -41,8 +54,12 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
                 'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
                 'bukamalu.context_processors.mapbox_token',
+                'bukamalu.context_processors.language_switcher',
             ],
         },
     },
@@ -60,9 +77,32 @@ DATABASES = {
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Dili'
 USE_I18N = True
+USE_L10N = True
 USE_TZ = True
+
+LANGUAGES = [
+    ('tet', 'Tetum'),
+    ('en', 'English'),
+]
+
+# Add extra languages not provided by Django
+EXTRA_LANG_INFO = {
+    'tet': {
+        'bidi': False,
+        'code': 'tet',
+        'name': 'Tetum',
+        'name_local': 'Tetum',
+    }
+}
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
+
+# Add custom languages not provided by Django
+locale.LANG_INFO.update(EXTRA_LANG_INFO)
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
